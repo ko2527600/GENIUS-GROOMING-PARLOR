@@ -1,5 +1,6 @@
 import { updateBookingStatus } from "../_lib/bookings.js";
 import { isAuthenticated } from "../_lib/session.js";
+import { notifyCustomer } from "../_lib/notify.js";
 
 const VALID_STATUSES = ["new", "confirmed", "completed", "cancelled"];
 
@@ -24,6 +25,9 @@ export default async function handler(req, res) {
     const booking = await updateBookingStatus(id, status);
     if (!booking) {
       return res.status(404).json({ ok: false, error: "Booking not found" });
+    }
+    if (status === "confirmed") {
+      await notifyCustomer("confirmed", booking);
     }
     return res.status(200).json({ ok: true, booking });
   } catch (err) {

@@ -1,5 +1,6 @@
 import { createBooking, listBookings } from "./_lib/bookings.js";
 import { isAuthenticated } from "./_lib/session.js";
+import { notifyCustomer } from "./_lib/notify.js";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
@@ -11,6 +12,7 @@ export default async function handler(req, res) {
 
     try {
       const booking = await createBooking({ name, phone, stylist, services, time });
+      await notifyCustomer("received", booking);
       return res.status(201).json({ ok: true, booking });
     } catch (err) {
       console.error("Failed to create booking:", err);
