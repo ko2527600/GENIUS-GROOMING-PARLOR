@@ -1,36 +1,47 @@
 import { shop } from "../data/shopData";
+import BackgroundSlideshow from "./BackgroundSlideshow";
+import gallery2 from "../assets/gallery/gallery-2.jpg";
+import gallery3 from "../assets/gallery/gallery-3.jpg";
+import gallery4 from "../assets/gallery/gallery-4.jpg";
+import gallery5 from "../assets/gallery/gallery-5.jpg";
+import gallery7 from "../assets/gallery/gallery-7.jpg";
+
+const bgImages = [gallery2, gallery3, gallery4, gallery5, gallery7];
 
 export default function Contact() {
   return (
-    <section id="contact" className="scroll-mt-16 bg-gray-50 px-4 py-16">
-      <div className="mx-auto max-w-3xl">
+    <section id="contact" className="relative scroll-mt-16 overflow-hidden px-4 py-16 text-white">
+      <BackgroundSlideshow images={bgImages} />
+      <div className="absolute inset-0 bg-ink/80" />
+
+      <div className="relative mx-auto max-w-3xl">
         <h2 className="text-center text-3xl font-bold">Visit Us</h2>
 
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
           <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-wide text-brand-dark">
+            <p className="text-sm font-semibold uppercase tracking-wide text-brand">
               Location
             </p>
-            <p className="mt-2 text-gray-700">{shop.address}</p>
+            <p className="mt-2 text-gray-200">{shop.address}</p>
           </div>
 
           <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-wide text-brand-dark">
+            <p className="text-sm font-semibold uppercase tracking-wide text-brand">
               Phone
             </p>
-            <a href={`tel:${shop.phone}`} className="mt-2 block text-gray-700">
+            <a href={`tel:${shop.phone}`} className="mt-2 block text-gray-200">
               {shop.phone}
             </a>
-            <a href={`tel:${shop.phone2}`} className="block text-gray-700">
+            <a href={`tel:${shop.phone2}`} className="block text-gray-200">
               {shop.phone2}
             </a>
           </div>
 
           <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-wide text-brand-dark">
+            <p className="text-sm font-semibold uppercase tracking-wide text-brand">
               Hours
             </p>
-            <ul className="mt-2 space-y-1 text-gray-700">
+            <ul className="mt-2 space-y-1 text-gray-200">
               {shop.hours.map((h) => (
                 <li key={h.day}>
                   <span className="font-medium">{h.day}:</span> {h.time}
@@ -51,19 +62,19 @@ export default function Contact() {
             href={`https://wa.me/${shop.whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border border-brand-dark px-8 py-3 text-center font-semibold text-brand-dark hover:bg-brand/10"
+            className="rounded-full border border-white/30 px-8 py-3 text-center font-semibold text-white hover:bg-white/10"
           >
             Message on WhatsApp
           </a>
         </div>
 
-        <p className="mt-8 text-center text-sm text-gray-500">
+        <p className="mt-8 text-center text-sm text-gray-300">
           Follow us on TikTok{" "}
           <a
             href={shop.social.tiktok}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-semibold text-ink underline underline-offset-4"
+            className="font-semibold text-white underline underline-offset-4"
           >
             @geniusgroomingparlour
           </a>{" "}
