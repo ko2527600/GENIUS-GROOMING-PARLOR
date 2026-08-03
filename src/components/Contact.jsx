@@ -21,6 +21,9 @@ export default function Contact() {
             <a href={`tel:${shop.phone}`} className="mt-2 block text-gray-700">
               {shop.phone}
             </a>
+            <a href={`tel:${shop.phone2}`} className="block text-gray-700">
+              {shop.phone2}
+            </a>
           </div>
 
           <div className="text-center">
@@ -53,6 +56,19 @@ export default function Contact() {
             Message on WhatsApp
           </a>
         </div>
+
+        <p className="mt-8 text-center text-sm text-gray-500">
+          Follow us on TikTok{" "}
+          <a
+            href={shop.social.tiktok}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-ink underline underline-offset-4"
+          >
+            @geniusgroomingparlour
+          </a>{" "}
+          for more styles.
+        </p>
       </div>
     </section>
   );

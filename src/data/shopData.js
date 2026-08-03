@@ -6,10 +6,12 @@ export const shop = {
   type: "Unisex Salon",
   tagline: "Sharp Fades. Sharper Style.",
   phone: "+233 24 708 3940",
+  phone2: "+233 53 092 5603",
   whatsapp: "233247083940",
-  address: "Lapaz, Accra, Ghana",
-  hours: [{ day: "Every Day", time: "Open 24 Hours" }],
+  address: "Lapaz New Market Road, Accra, Ghana",
+  hours: [{ day: "Every Day", time: "Day & Night Services Available" }],
   social: {
+    tiktok: "https://www.tiktok.com/@geniusgroomingparlour",
     instagram: "#",
     facebook: "#",
   },
@@ -18,28 +20,33 @@ export const shop = {
 // Swap this paragraph for her real story once she shares it.
 export const about = {
   story:
-    "Genius Grooming Parlor is a unisex salon in Lapaz built around one idea: everyone deserves a sharp, clean look and a comfortable chair to get it in. Whatever you're after — a precision fade, a beard shape-up, or a full refresh — our barbers take the time to get it right.",
+    "Genius Grooming Parlor is a unisex salon in Lapaz built around one idea: everyone deserves a sharp, clean look and a comfortable chair to get it in. From haircuts and color to braids and nails, our team takes the time to get it right — day or night.",
   highlights: [
     "Unisex salon",
-    "Open 24 hours",
-    "Skilled barbers",
+    "Day & night service",
+    "Skilled stylists",
     "Clean, welcoming space",
   ],
 };
 
+// Real service list from the client. No confirmed prices/durations yet —
+// booking asks the customer to confirm those over WhatsApp/SMS instead of
+// showing invented numbers.
 export const services = [
-  { id: "haircut", name: "Classic Haircut", price: 30, duration: "30 min" },
-  { id: "fade", name: "Skin Fade", price: 40, duration: "45 min" },
-  { id: "beard", name: "Beard Trim & Shape", price: 20, duration: "20 min" },
-  { id: "combo", name: "Haircut + Beard Combo", price: 55, duration: "1 hr" },
-  { id: "lineup", name: "Line Up", price: 15, duration: "15 min" },
-  { id: "kids", name: "Kids Haircut", price: 25, duration: "30 min" },
+  { id: "haircut", name: "Hair Cut" },
+  { id: "coloring", name: "Hair Coloring" },
+  { id: "dreadlocks", name: "Dreadlocks" },
+  { id: "braids", name: "Braids" },
+  { id: "ponytails", name: "Ponytails" },
+  { id: "nails", name: "Nails (Manicure & Pedicure)" },
+  { id: "facials", name: "Facials" },
+  { id: "makeup", name: "Makeup" },
 ];
 
 export const barbers = [
   { id: "any", name: "No Preference" },
-  { id: "barber1", name: "Barber One" },
-  { id: "barber2", name: "Barber Two" },
+  { id: "barber1", name: "Stylist One" },
+  { id: "barber2", name: "Stylist Two" },
 ];
 
 export const timeSlots = [

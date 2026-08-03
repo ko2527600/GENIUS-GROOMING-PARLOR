@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { barbers, services, timeSlots, shop } from "../data/shopData";
 
-const STEPS = ["Barber", "Service", "Time", "Confirm"];
+const STEPS = ["Stylist", "Service", "Time", "Confirm"];
 
 function buildMessage({ customer, barber, service, time }) {
   return (
     `New booking request - ${shop.name}\n` +
     `Name: ${customer.name}\n` +
     `Phone: ${customer.phone}\n` +
-    `Barber: ${barber?.name}\n` +
-    `Service: ${service?.name} (GH₵${service?.price})\n` +
+    `Stylist: ${barber?.name}\n` +
+    `Service: ${service?.name}\n` +
     `Time: ${time}`
   );
 }
@@ -150,16 +150,13 @@ export default function Booking() {
               <button
                 key={s.id}
                 onClick={() => setService(s)}
-                className={`rounded-xl border p-4 text-left transition ${
+                className={`rounded-xl border p-4 text-left font-medium transition ${
                   service?.id === s.id
                     ? "border-brand bg-brand/10"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <p className="font-medium">{s.name}</p>
-                <p className="text-sm text-gray-500">
-                  {s.duration} &middot; GH₵{s.price}
-                </p>
+                {s.name}
               </button>
             ))}
           </div>
@@ -187,11 +184,10 @@ export default function Booking() {
           <form onSubmit={submit} className="space-y-4">
             <div className="rounded-xl bg-gray-50 p-4 text-sm">
               <p>
-                <span className="font-semibold">Barber:</span> {barber?.name}
+                <span className="font-semibold">Stylist:</span> {barber?.name}
               </p>
               <p>
-                <span className="font-semibold">Service:</span>{" "}
-                {service?.name} (GH₵{service?.price})
+                <span className="font-semibold">Service:</span> {service?.name}
               </p>
               <p>
                 <span className="font-semibold">Time:</span> {time}
