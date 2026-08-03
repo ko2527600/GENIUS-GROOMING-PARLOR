@@ -2,7 +2,7 @@ import { about } from "../data/shopData";
 
 export default function About() {
   return (
-    <section id="about" className="scroll-mt-16 bg-gray-50 px-4 py-16">
+    <section id="about" className="scroll-mt-16 bg-white px-4 py-16">
       <div className="mx-auto max-w-3xl text-center">
         <h2 className="text-3xl font-bold">Our Story</h2>
         <p className="mt-4 leading-relaxed text-gray-600">{about.story}</p>
@@ -11,7 +11,7 @@ export default function About() {
           {about.highlights.map((h) => (
             <div
               key={h}
-              className="rounded-lg bg-white p-4 text-sm font-medium shadow-sm"
+              className="rounded-lg bg-gray-50 p-4 text-sm font-medium shadow-sm"
             >
               {h}
             </div>

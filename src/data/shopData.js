@@ -15,13 +15,14 @@ export const shop = {
   },
 };
 
+// Swap this paragraph for her real story once she shares it.
 export const about = {
   story:
-    "Placeholder: her story goes here — how the shop started, what drives her, what makes it different from every other barbershop in Lapaz.",
+    "Genius Grooming Parlor is a unisex salon in Lapaz built around one idea: everyone deserves a sharp, clean look and a comfortable chair to get it in. Whatever you're after — a precision fade, a beard shape-up, or a full refresh — our barbers take the time to get it right.",
   highlights: [
-    "Years of experience",
-    "Certified barbers",
-    "Premium products",
+    "Unisex salon",
+    "Open 24 hours",
+    "Skilled barbers",
     "Clean, welcoming space",
   ],
 };
