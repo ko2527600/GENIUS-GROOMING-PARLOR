@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import BookingPage from './pages/BookingPage'
+import Admin from './pages/Admin'
 import ScrollToHash from './ScrollToHash'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<BookingPage />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>
       <Footer />

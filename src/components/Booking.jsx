@@ -82,6 +82,20 @@ export default function Booking() {
     e.preventDefault();
     if (!customer.name || !customer.phone) return;
     setDone(true);
+
+    // Best-effort save to the admin dashboard - the WhatsApp/SMS flow
+    // below doesn't depend on this succeeding.
+    fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: customer.name,
+        phone: customer.phone,
+        stylist: barber?.name,
+        services: serviceSummary(selectedServices, otherService),
+        time,
+      }),
+    }).catch(() => {});
   }
 
   if (done) {
