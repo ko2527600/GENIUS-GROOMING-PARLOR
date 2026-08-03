@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { shop } from "../data/shopData";
 import logo from "../assets/logo.png";
-import Typewriter from "./Typewriter";
 import heroVideoWebm from "../assets/video/hero-bg.webm";
 import heroVideoMp4 from "../assets/video/hero-bg.mp4";
 import heroPoster from "../assets/video/hero-bg-poster.jpg";
@@ -14,10 +13,6 @@ const heroVideos = [
   { webm: heroVideoWebm, mp4: heroVideoMp4, poster: heroPoster },
   { webm: heroVideo2Webm, mp4: heroVideo2Mp4, poster: heroPoster2 },
 ];
-
-const titleSpeed = 90;
-const titleStartDelay = 300;
-const titleTypingDuration = titleStartDelay + shop.name.length * titleSpeed;
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
@@ -47,12 +42,10 @@ export default function Hero() {
         </span>
 
         <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
-          <Typewriter text={shop.name} speed={titleSpeed} startDelay={titleStartDelay} loop />
+          {shop.name}
         </h1>
 
-        <p className="max-w-md text-lg text-gray-300">
-          <Typewriter text={shop.tagline} startDelay={titleTypingDuration + 250} />
-        </p>
+        <p className="max-w-md text-lg text-gray-300">{shop.tagline}</p>
 
         <div className="flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row">
           <Link
