@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { shop } from "../data/shopData";
 import logo from "../assets/logo.png";
+import Typewriter from "./Typewriter";
 import heroVideoWebm from "../assets/video/hero-bg.webm";
 import heroVideoMp4 from "../assets/video/hero-bg.mp4";
 import heroPoster from "../assets/video/hero-bg-poster.jpg";
@@ -42,7 +43,7 @@ export default function Hero() {
         </span>
 
         <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
-          {shop.name}
+          <Typewriter text={shop.name} />
         </h1>
 
         <p className="max-w-md text-lg text-gray-300">{shop.tagline}</p>
