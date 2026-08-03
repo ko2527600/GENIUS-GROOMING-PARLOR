@@ -3,6 +3,27 @@ import { barbers, services, timeSlots, shop } from "../data/shopData";
 
 const STEPS = ["Barber", "Service", "Time", "Confirm"];
 
+function buildMessage({ customer, barber, service, time }) {
+  return (
+    `New booking request - ${shop.name}\n` +
+    `Name: ${customer.name}\n` +
+    `Phone: ${customer.phone}\n` +
+    `Barber: ${barber?.name}\n` +
+    `Service: ${service?.name} (GH₵${service?.price})\n` +
+    `Time: ${time}`
+  );
+}
+
+function whatsappLink(message) {
+  return `https://wa.me/${shop.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
+function smsLink(message) {
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const separator = isIOS ? "&" : "?";
+  return `sms:${shop.phone.replace(/\s/g, "")}${separator}body=${encodeURIComponent(message)}`;
+}
+
 export default function Booking() {
   const [step, setStep] = useState(0);
   const [barber, setBarber] = useState(null);
@@ -31,19 +52,39 @@ export default function Booking() {
   }
 
   if (done) {
+    const message = buildMessage({ customer, barber, service, time });
+
     return (
       <section className="mx-auto max-w-lg px-4 py-16 text-center">
         <div className="rounded-2xl border border-brand/40 bg-gray-50 p-8">
-          <h2 className="text-2xl font-bold">You're Booked!</h2>
+          <h2 className="text-2xl font-bold">Almost Done!</h2>
           <p className="mt-3 text-gray-600">
             {customer.name}, your <strong>{service?.name}</strong> with{" "}
             <strong>{barber?.name}</strong> is set for{" "}
             <strong>{time}</strong>.
           </p>
           <p className="mt-2 text-sm text-gray-500">
-            We'll confirm by phone at {customer.phone}. See you at{" "}
-            {shop.address}!
+            Tap below to send your booking details straight to{" "}
+            {shop.name} — one tap and it's sent.
           </p>
+
+          <div className="mt-6 flex flex-col gap-3">
+            <a
+              href={whatsappLink(message)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-[#25D366] py-3 font-semibold text-white hover:opacity-90"
+            >
+              Send via WhatsApp
+            </a>
+            <a
+              href={smsLink(message)}
+              className="rounded-full border border-gray-300 py-3 font-semibold text-ink hover:bg-gray-100"
+            >
+              Send via SMS
+            </a>
+          </div>
+
           <button
             onClick={() => {
               setDone(false);
@@ -53,7 +94,7 @@ export default function Booking() {
               setTime(null);
               setCustomer({ name: "", phone: "" });
             }}
-            className="mt-6 rounded-full bg-ink px-6 py-3 font-semibold text-white"
+            className="mt-6 text-sm font-semibold text-gray-500 underline underline-offset-4"
           >
             Book Another
           </button>
