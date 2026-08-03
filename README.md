@@ -5,9 +5,10 @@ and let customers book appointments online.
 
 ## Status
 
-Early build — placeholder text, prices, and contact info throughout. See
+Real logo, phone number, and business details are wired in. Services,
+prices, and most photos are still placeholders — see
 `src/data/shopData.js` to swap in the real business details, and
-`src/assets/` for photos/logo once they're ready.
+`src/assets/` for photos once more are shared.
 
 ## Stack
 
@@ -19,17 +20,22 @@ Early build — placeholder text, prices, and contact info throughout. See
 
 ```
 src/
-  components/    Reusable UI pieces (Navbar, Hero, Services, About, Contact, Booking, Footer)
+  components/    Reusable UI pieces (Navbar, Hero, Services, Gallery, About, Contact, Booking, Footer)
   pages/         Route-level pages (Home, BookingPage)
   data/          Editable business content (shop info, services/prices, hours)
+  assets/        Logo and photos
   App.jsx        Routes + page layout
   main.jsx       App entry point
+backend/         Separate Express API for automated WhatsApp booking
+                 notifications — not deployed yet, see backend/README.md
 ```
 
 ## Pages
 
-- **Home** (`/`) — Hero, Services, About, Contact, all as sections on one page
-- **Booking** (`/booking`) — Multi-step booking flow: choose barber → service → time → confirm details
+- **Home** (`/`) — Hero, Services, Gallery, About, Contact, all as sections on one page
+- **Booking** (`/booking`) — Multi-step booking flow: choose barber → service → time → confirm details.
+  On confirm, the customer can send the booking straight to the shop's
+  WhatsApp or SMS with one tap (no backend required for this part).
 
 ## Getting Started
 
@@ -49,8 +55,33 @@ npm run preview   # preview the production build locally
 
 ## Deployment
 
-Deploys cleanly to [Vercel](https://vercel.com/) or [Netlify](https://www.netlify.com/)
-by connecting this GitHub repo — no extra config needed for a Vite app.
+This is a static Vite build, so both platforms deploy it in a couple of
+minutes with zero manual config — the settings below are already the
+defaults they detect.
+
+### Vercel
+
+1. [vercel.com](https://vercel.com/) → **Add New Project** → import this GitHub repo
+2. Framework preset: **Vite** (auto-detected). Build command `npm run build`,
+   output directory `dist` (auto-detected)
+3. Deploy — you'll get a live `*.vercel.app` URL
+
+`vercel.json` in this repo already tells Vercel to route all paths to
+`index.html`, so refreshing or linking directly to `/booking` works.
+
+### Netlify
+
+1. [netlify.com](https://www.netlify.com/) → **Add new site** → import this GitHub repo
+2. Build command `npm run build`, publish directory `dist` (auto-detected)
+3. Deploy — you'll get a live `*.netlify.app` URL
+
+`public/_redirects` in this repo (copied into every build) tells Netlify
+to do the same client-side routing fallback.
+
+### Custom domain
+
+Once she has a domain, both platforms let you attach it directly in their
+dashboard under the project's Domains settings — no code changes needed.
 
 ## Editing Content
 
