@@ -33,9 +33,9 @@ export default function Navbar() {
 
         <nav className="hidden items-center gap-6 md:flex">
           {links.map((l) => (
-            <a key={l.to} href={l.to} className="text-sm font-medium text-gray-200 hover:text-brand">
+            <Link key={l.to} to={l.to} className="text-sm font-medium text-gray-200 hover:text-brand">
               {l.label}
-            </a>
+            </Link>
           ))}
           <NavLink
             to="/booking"
@@ -49,14 +49,14 @@ export default function Navbar() {
       {open && (
         <nav className="flex flex-col gap-1 border-t border-white/10 px-4 pb-4 md:hidden">
           {links.map((l) => (
-            <a
+            <Link
               key={l.to}
-              href={l.to}
+              to={l.to}
               onClick={() => setOpen(false)}
               className="rounded px-2 py-3 text-sm font-medium text-gray-200 hover:bg-white/5"
             >
               {l.label}
-            </a>
+            </Link>
           ))}
           <NavLink
             to="/booking"

@@ -1,35 +1,53 @@
 import { Link } from "react-router-dom";
 import { shop } from "../data/shopData";
 import logo from "../assets/logo.png";
+import heroVideoWebm from "../assets/video/hero-bg.webm";
+import heroVideoMp4 from "../assets/video/hero-bg.mp4";
+import heroPoster from "../assets/video/hero-bg-poster.jpg";
 
 export default function Hero() {
   return (
-    <section className="flex min-h-[85svh] flex-col items-center justify-center gap-6 bg-ink px-4 text-center text-white">
-      <img src={logo} alt={shop.name} className="h-28 w-28 rounded-full object-cover" />
+    <section className="relative flex min-h-[85svh] flex-col items-center justify-center gap-6 overflow-hidden bg-ink px-4 text-center text-white">
+      <video
+        poster={heroPoster}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src={heroVideoWebm} type="video/webm" />
+        <source src={heroVideoMp4} type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-ink/70" />
 
-      <span className="rounded-full border border-brand px-4 py-1 text-xs uppercase tracking-widest text-brand">
-        {shop.type} &middot; {shop.address}
-      </span>
+      <div className="relative flex flex-col items-center gap-6">
+        <img src={logo} alt={shop.name} className="h-28 w-28 rounded-full object-cover" />
 
-      <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
-        {shop.name}
-      </h1>
+        <span className="rounded-full border border-brand px-4 py-1 text-xs uppercase tracking-widest text-brand">
+          {shop.type} &middot; {shop.address}
+        </span>
 
-      <p className="max-w-md text-lg text-gray-300">{shop.tagline}</p>
+        <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
+          {shop.name}
+        </h1>
 
-      <div className="flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row">
-        <Link
-          to="/booking"
-          className="rounded-full bg-red px-8 py-3 text-center font-semibold text-white hover:bg-red-dark"
-        >
-          Book Now
-        </Link>
-        <a
-          href="#services"
-          className="rounded-full border border-white/30 px-8 py-3 text-center font-semibold text-white hover:bg-white/10"
-        >
-          View Services
-        </a>
+        <p className="max-w-md text-lg text-gray-300">{shop.tagline}</p>
+
+        <div className="flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row">
+          <Link
+            to="/booking"
+            className="rounded-full bg-red px-8 py-3 text-center font-semibold text-white hover:bg-red-dark"
+          >
+            Book Now
+          </Link>
+          <a
+            href="#services"
+            className="rounded-full border border-white/30 px-8 py-3 text-center font-semibold text-white hover:bg-white/10"
+          >
+            View Services
+          </a>
+        </div>
       </div>
     </section>
   );
