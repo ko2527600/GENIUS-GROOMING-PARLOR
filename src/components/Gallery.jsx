@@ -7,6 +7,13 @@ import gallery5 from "../assets/gallery/gallery-5.jpg";
 import gallery6 from "../assets/gallery/gallery-6.jpg";
 import gallery7 from "../assets/gallery/gallery-7.jpg";
 import gallery8 from "../assets/gallery/gallery-8.jpg";
+import gallery9 from "../assets/gallery/gallery-9.jpg";
+import gallery10 from "../assets/gallery/gallery-10.jpg";
+import gallery11 from "../assets/gallery/gallery-11.jpg";
+import gallery12 from "../assets/gallery/gallery-12.jpg";
+import gallery13 from "../assets/gallery/gallery-13.jpg";
+import gallery14 from "../assets/gallery/gallery-14.jpg";
+import gallery15 from "../assets/gallery/gallery-15.jpg";
 import process1Webm from "../assets/video/process-1.webm";
 import process1Mp4 from "../assets/video/process-1.mp4";
 import process1Poster from "../assets/video/process-1-poster.jpg";
@@ -23,6 +30,13 @@ const photos = [
   gallery6,
   gallery7,
   gallery8,
+  gallery9,
+  gallery10,
+  gallery11,
+  gallery12,
+  gallery13,
+  gallery14,
+  gallery15,
 ];
 
 const videos = [
