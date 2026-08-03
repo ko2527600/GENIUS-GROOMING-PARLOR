@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { shop } from "../data/shopData";
+import logo from "../assets/logo.png";
 
 const links = [
   { to: "/#services", label: "Services" },
@@ -14,8 +15,9 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-ink text-white shadow-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link to="/" className="text-lg font-bold tracking-wide" onClick={() => setOpen(false)}>
-          {shop.name}
+        <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
+          <img src={logo} alt={shop.name} className="h-10 w-10 rounded-full object-cover" />
+          <span className="text-lg font-bold tracking-wide">{shop.name}</span>
         </Link>
 
         <button
@@ -37,7 +39,7 @@ export default function Navbar() {
           ))}
           <NavLink
             to="/booking"
-            className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-ink hover:bg-brand-dark"
+            className="rounded-full bg-red px-4 py-2 text-sm font-semibold text-white hover:bg-red-dark"
           >
             Book Now
           </NavLink>
@@ -59,7 +61,7 @@ export default function Navbar() {
           <NavLink
             to="/booking"
             onClick={() => setOpen(false)}
-            className="mt-2 rounded-full bg-brand px-4 py-3 text-center text-sm font-semibold text-ink"
+            className="mt-2 rounded-full bg-red px-4 py-3 text-center text-sm font-semibold text-white"
           >
             Book Now
           </NavLink>

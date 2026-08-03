@@ -3,6 +3,8 @@
 @theme {
   --color-brand: #d4af37;
   --color-brand-dark: #a8871f;
+  --color-red: #c41e1e;
+  --color-red-dark: #9b1818;
   --color-ink: #0f0f0f;
   --color-ink-soft: #1c1c1c;
 }

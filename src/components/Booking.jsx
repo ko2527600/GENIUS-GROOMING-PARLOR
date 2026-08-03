@@ -186,7 +186,7 @@ export default function Booking() {
 
             <button
               type="submit"
-              className="w-full rounded-full bg-brand py-3 font-semibold text-ink"
+              className="w-full rounded-full bg-red py-3 font-semibold text-white hover:bg-red-dark"
             >
               Confirm Booking
             </button>

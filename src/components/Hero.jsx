@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { shop } from "../data/shopData";
+import logo from "../assets/logo.png";
 
 export default function Hero() {
   return (
     <section className="flex min-h-[85svh] flex-col items-center justify-center gap-6 bg-ink px-4 text-center text-white">
+      <img src={logo} alt={shop.name} className="h-28 w-28 rounded-full object-cover" />
+
       <span className="rounded-full border border-brand px-4 py-1 text-xs uppercase tracking-widest text-brand">
-        {shop.address}
+        {shop.type} &middot; {shop.address}
       </span>
 
       <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
@@ -17,7 +20,7 @@ export default function Hero() {
       <div className="flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row">
         <Link
           to="/booking"
-          className="rounded-full bg-brand px-8 py-3 text-center font-semibold text-ink hover:bg-brand-dark"
+          className="rounded-full bg-red px-8 py-3 text-center font-semibold text-white hover:bg-red-dark"
         >
           Book Now
         </Link>

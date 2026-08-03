@@ -3,15 +3,12 @@
 
 export const shop = {
   name: "Genius Grooming Parlor",
+  type: "Unisex Salon",
   tagline: "Sharp Fades. Sharper Style.",
-  phone: "+233 000 000 000",
-  whatsapp: "+233000000000",
+  phone: "+233 24 708 3940",
+  whatsapp: "233247083940",
   address: "Lapaz, Accra, Ghana",
-  hours: [
-    { day: "Monday – Friday", time: "8:00 AM – 8:00 PM" },
-    { day: "Saturday", time: "8:00 AM – 9:00 PM" },
-    { day: "Sunday", time: "10:00 AM – 6:00 PM" },
-  ],
+  hours: [{ day: "Every Day", time: "Open 24 Hours" }],
   social: {
     instagram: "#",
     facebook: "#",
