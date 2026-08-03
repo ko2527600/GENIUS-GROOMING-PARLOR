@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import { services } from "../data/shopData";
+import { services, groupServicesByCategory } from "../data/shopData";
+
+const serviceGroups = groupServicesByCategory(services);
 
 export default function Services() {
   return (
@@ -10,19 +12,28 @@ export default function Services() {
           Day and night services available.
         </p>
 
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {services.map((s) => (
-            <div
-              key={s.id}
-              className="flex items-center justify-between rounded-xl border border-gray-200 p-5 shadow-sm"
-            >
-              <h3 className="font-semibold">{s.name}</h3>
-              <Link
-                to="/booking"
-                className="text-sm font-semibold text-ink underline underline-offset-4"
-              >
-                Book
-              </Link>
+        <div className="mt-10 space-y-8">
+          {serviceGroups.map((group) => (
+            <div key={group.category}>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-dark">
+                {group.category}
+              </p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {group.items.map((s) => (
+                  <div
+                    key={s.id}
+                    className="flex items-center justify-between rounded-xl border border-gray-200 p-5 shadow-sm"
+                  >
+                    <h3 className="font-semibold">{s.name}</h3>
+                    <Link
+                      to="/booking"
+                      className="text-sm font-semibold text-ink underline underline-offset-4"
+                    >
+                      Book
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

@@ -29,19 +29,35 @@ export const about = {
   ],
 };
 
-// Real service list from the client. No confirmed prices/durations yet —
-// booking asks the customer to confirm those over WhatsApp/SMS instead of
-// showing invented numbers.
+// Real service list from the client, grouped so the booking flow and
+// homepage can show small category headings instead of one flat list.
+// No confirmed prices/durations yet — booking asks the customer to
+// confirm those over WhatsApp/SMS instead of showing invented numbers.
 export const services = [
-  { id: "haircut", name: "Hair Cut" },
-  { id: "coloring", name: "Hair Coloring" },
-  { id: "dreadlocks", name: "Dreadlocks" },
-  { id: "braids", name: "Braids" },
-  { id: "ponytails", name: "Ponytails" },
-  { id: "nails", name: "Nails (Manicure & Pedicure)" },
-  { id: "facials", name: "Facials" },
-  { id: "makeup", name: "Makeup" },
+  { id: "haircut", name: "Hair Cut", category: "Hair" },
+  { id: "coloring", name: "Hair Coloring", category: "Hair" },
+  { id: "dreadlocks", name: "Dreadlocks", category: "Hair" },
+  { id: "braids", name: "Braids", category: "Hair" },
+  { id: "ponytails", name: "Ponytails", category: "Hair" },
+  { id: "nails", name: "Nails (Manicure & Pedicure)", category: "Nails" },
+  { id: "facials", name: "Facials", category: "Beauty" },
+  { id: "makeup", name: "Makeup", category: "Beauty" },
 ];
+
+// Groups `services` into { category, items } buckets, preserving order
+// of first appearance.
+export function groupServicesByCategory(list) {
+  const order = [];
+  const map = new Map();
+  for (const s of list) {
+    if (!map.has(s.category)) {
+      map.set(s.category, []);
+      order.push(s.category);
+    }
+    map.get(s.category).push(s);
+  }
+  return order.map((category) => ({ category, items: map.get(category) }));
+}
 
 export const barbers = [
   { id: "any", name: "No Preference" },

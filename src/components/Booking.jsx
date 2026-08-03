@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { barbers, services, timeSlots, shop } from "../data/shopData";
+import {
+  barbers,
+  services,
+  timeSlots,
+  shop,
+  groupServicesByCategory,
+} from "../data/shopData";
+
+const serviceGroups = groupServicesByCategory(services);
 
 const STEPS = ["Stylist", "Service", "Time", "Confirm"];
 
@@ -168,31 +176,40 @@ export default function Booking() {
             <p className="mb-3 text-sm text-gray-500">
               Select as many as you need — combine haircut, nails, and more in one booking.
             </p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {services.map((s) => {
-                const checked = selectedServices.some((x) => x.id === s.id);
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => toggleService(s)}
-                    aria-pressed={checked}
-                    className={`flex items-center justify-between rounded-xl border p-4 text-left font-medium transition ${
-                      checked
-                        ? "border-brand bg-brand/10"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    {s.name}
-                    <span
-                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
-                        checked ? "border-brand bg-brand text-ink" : "border-gray-300"
-                      }`}
-                    >
-                      {checked && "✓"}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="space-y-5">
+              {serviceGroups.map((group) => (
+                <div key={group.category}>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    {group.category}
+                  </p>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {group.items.map((s) => {
+                      const checked = selectedServices.some((x) => x.id === s.id);
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => toggleService(s)}
+                          aria-pressed={checked}
+                          className={`flex items-center justify-between rounded-xl border p-4 text-left font-medium transition ${
+                            checked
+                              ? "border-brand bg-brand/10"
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          {s.name}
+                          <span
+                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
+                              checked ? "border-brand bg-brand text-ink" : "border-gray-300"
+                            }`}
+                          >
+                            {checked && "✓"}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-4">
