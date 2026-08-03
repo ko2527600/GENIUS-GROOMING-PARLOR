@@ -17,6 +17,14 @@ export const shop = {
   },
 };
 
+// From her TikTok profile (@geniusgroomingparlour) as of Aug 2026 —
+// update if she shares fresher numbers.
+export const tiktokStats = {
+  followers: "53.7K",
+  likes: "867.2K",
+  following: "111",
+};
+
 // Swap this paragraph for her real story once she shares it.
 export const about = {
   story:
