@@ -1,23 +1,36 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { shop } from "../data/shopData";
 import logo from "../assets/logo.png";
 import heroVideoWebm from "../assets/video/hero-bg.webm";
 import heroVideoMp4 from "../assets/video/hero-bg.mp4";
 import heroPoster from "../assets/video/hero-bg-poster.jpg";
+import heroVideo2Webm from "../assets/video/hero-bg-2.webm";
+import heroVideo2Mp4 from "../assets/video/hero-bg-2.mp4";
+import heroPoster2 from "../assets/video/hero-bg-2-poster.jpg";
+
+const heroVideos = [
+  { webm: heroVideoWebm, mp4: heroVideoMp4, poster: heroPoster },
+  { webm: heroVideo2Webm, mp4: heroVideo2Mp4, poster: heroPoster2 },
+];
 
 export default function Hero() {
+  const [index, setIndex] = useState(0);
+  const current = heroVideos[index];
+
   return (
     <section className="relative flex min-h-[85svh] flex-col items-center justify-center gap-6 overflow-hidden bg-ink px-4 text-center text-white">
       <video
-        poster={heroPoster}
+        key={index}
+        poster={current.poster}
         autoPlay
         muted
-        loop
         playsInline
+        onEnded={() => setIndex((i) => (i + 1) % heroVideos.length)}
         className="absolute inset-0 h-full w-full object-cover"
       >
-        <source src={heroVideoWebm} type="video/webm" />
-        <source src={heroVideoMp4} type="video/mp4" />
+        <source src={current.webm} type="video/webm" />
+        <source src={current.mp4} type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-ink/70" />
 
