@@ -51,21 +51,29 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:items-start">
           <a
             href={`tel:${shop.phone}`}
-            className="rounded-full bg-red px-8 py-3 text-center font-semibold text-white hover:bg-red-dark"
+            className="w-full max-w-xs rounded-full bg-red px-8 py-3 text-center font-semibold text-white hover:bg-red-dark sm:w-auto"
           >
             Call Now
           </a>
-          <a
-            href={`https://wa.me/${shop.whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-white/30 px-8 py-3 text-center font-semibold text-white hover:bg-white/10"
-          >
-            Message on WhatsApp
-          </a>
+          <div className="flex w-full max-w-xs flex-col items-center gap-1 sm:w-auto">
+            <a
+              href={`https://wa.me/${shop.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-full border border-white/30 px-8 py-3 text-center font-semibold text-white hover:bg-white/10"
+            >
+              Message on WhatsApp
+            </a>
+            <a
+              href={`tel:${shop.phone}`}
+              className="text-sm text-gray-300 underline underline-offset-4 hover:text-white"
+            >
+              or tap to call {shop.phone}
+            </a>
+          </div>
         </div>
 
         <p className="mt-8 text-center text-sm text-gray-300">
