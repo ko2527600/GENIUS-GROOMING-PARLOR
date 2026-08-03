@@ -141,7 +141,132 @@ function BookingCard({ booking, onStatusChange }) {
   );
 }
 
+function CustomerCard({ customer }) {
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+
+  const lastVisit = new Date(customer.lastVisit).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  async function handleRemind() {
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/customers/remind", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: customer.phone }),
+      });
+      const data = await res.json();
+      setStatus(res.ok && data.ok ? "sent" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div className="rounded-xl border border-gray-200 p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-semibold">{customer.name}</p>
+          <a href={`tel:${customer.phone}`} className="text-sm text-gray-500 underline underline-offset-2">
+            {customer.phone}
+          </a>
+        </div>
+        <span className="text-xs text-gray-500">
+          {customer.visits} visit{customer.visits === 1 ? "" : "s"}
+        </span>
+      </div>
+
+      <dl className="mt-3 space-y-1 text-sm text-gray-600">
+        <div className="flex gap-2">
+          <dt className="font-medium text-gray-800">Last visit:</dt>
+          <dd>{lastVisit}</dd>
+        </div>
+        <div className="flex gap-2">
+          <dt className="font-medium text-gray-800">Last service:</dt>
+          <dd>{customer.lastServices}</dd>
+        </div>
+      </dl>
+
+      <button
+        onClick={handleRemind}
+        disabled={status === "sending" || status === "sent"}
+        className="mt-4 rounded-full border border-gray-300 px-4 py-2 text-xs font-semibold text-ink transition hover:border-ink disabled:cursor-default disabled:opacity-50"
+      >
+        {status === "sending"
+          ? "Sending..."
+          : status === "sent"
+            ? "Reminder Sent"
+            : status === "error"
+              ? "Failed - Try Again"
+              : "Send Reminder"}
+      </button>
+    </div>
+  );
+}
+
+function CustomersView() {
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/api/customers");
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          setError(data.error || "Failed to load customers");
+          return;
+        }
+        setCustomers(data.customers);
+      } catch {
+        setError("Network error - please try again");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const filtered = customers.filter((c) =>
+    `${c.name} ${c.phone}`.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <div>
+      <input
+        type="search"
+        placeholder="Search by name or phone..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="mt-4 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+      />
+
+      {error && <p className="mt-6 text-red">{error}</p>}
+
+      {loading ? (
+        <p className="mt-8 text-center text-gray-500">Loading customers...</p>
+      ) : filtered.length === 0 ? (
+        <p className="mt-8 text-center text-gray-500">No customers found.</p>
+      ) : (
+        <div className="mt-6 space-y-4">
+          {filtered.map((c) => (
+            <CustomerCard key={c.phone} customer={c} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Dashboard({ onLoggedOut }) {
+  const [tab, setTab] = useState("bookings"); // bookings | customers
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -210,14 +335,16 @@ function Dashboard({ onLoggedOut }) {
   return (
     <section className="mx-auto max-w-3xl px-4 py-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Bookings</h1>
+        <h1 className="text-2xl font-bold">{tab === "bookings" ? "Bookings" : "Customers"}</h1>
         <div className="flex gap-3">
-          <button
-            onClick={loadBookings}
-            className="text-sm font-semibold text-gray-500 underline underline-offset-4"
-          >
-            Refresh
-          </button>
+          {tab === "bookings" && (
+            <button
+              onClick={loadBookings}
+              className="text-sm font-semibold text-gray-500 underline underline-offset-4"
+            >
+              Refresh
+            </button>
+          )}
           <button
             onClick={handleLogout}
             className="text-sm font-semibold text-red underline underline-offset-4"
@@ -227,42 +354,67 @@ function Dashboard({ onLoggedOut }) {
         </div>
       </div>
 
-      <input
-        type="search"
-        placeholder="Search by name or phone..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mt-4 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
-      />
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        {["all", ...STATUS_OPTIONS].map((s) => (
+      <div className="mt-4 flex gap-2">
+        {[
+          { id: "bookings", label: "Bookings" },
+          { id: "customers", label: "Customers" },
+        ].map((t) => (
           <button
-            key={s}
-            onClick={() => setFilter(s)}
-            className={`rounded-full border px-3 py-1.5 text-sm font-semibold capitalize transition ${
-              filter === s
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
+              tab === t.id
                 ? "border-ink bg-ink text-white"
                 : "border-gray-300 text-gray-600 hover:border-ink"
             }`}
           >
-            {s} {s !== "all" && counts[s] ? `(${counts[s]})` : ""}
+            {t.label}
           </button>
         ))}
       </div>
 
-      {error && <p className="mt-6 text-red">{error}</p>}
-
-      {loading ? (
-        <p className="mt-8 text-center text-gray-500">Loading bookings...</p>
-      ) : filtered.length === 0 ? (
-        <p className="mt-8 text-center text-gray-500">No bookings found.</p>
+      {tab === "customers" ? (
+        <CustomersView />
       ) : (
-        <div className="mt-6 space-y-4">
-          {filtered.map((b) => (
-            <BookingCard key={b.id} booking={b} onStatusChange={handleStatusChange} />
-          ))}
-        </div>
+        <>
+          <input
+            type="search"
+            placeholder="Search by name or phone..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="mt-4 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+          />
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {["all", ...STATUS_OPTIONS].map((s) => (
+              <button
+                key={s}
+                onClick={() => setFilter(s)}
+                className={`rounded-full border px-3 py-1.5 text-sm font-semibold capitalize transition ${
+                  filter === s
+                    ? "border-ink bg-ink text-white"
+                    : "border-gray-300 text-gray-600 hover:border-ink"
+                }`}
+              >
+                {s} {s !== "all" && counts[s] ? `(${counts[s]})` : ""}
+              </button>
+            ))}
+          </div>
+
+          {error && <p className="mt-6 text-red">{error}</p>}
+
+          {loading ? (
+            <p className="mt-8 text-center text-gray-500">Loading bookings...</p>
+          ) : filtered.length === 0 ? (
+            <p className="mt-8 text-center text-gray-500">No bookings found.</p>
+          ) : (
+            <div className="mt-6 space-y-4">
+              {filtered.map((b) => (
+                <BookingCard key={b.id} booking={b} onStatusChange={handleStatusChange} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </section>
   );
