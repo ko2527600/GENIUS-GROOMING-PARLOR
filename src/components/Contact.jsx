@@ -24,7 +24,7 @@ export default function Contact() {
             </p>
             <p className="mt-2 text-gray-200">{shop.address}</p>
             <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`}
+              href={shop.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-1 inline-block text-sm font-semibold text-brand underline underline-offset-4 hover:text-white"

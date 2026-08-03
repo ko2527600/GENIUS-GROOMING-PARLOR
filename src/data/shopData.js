@@ -9,6 +9,7 @@ export const shop = {
   phone2: "+233 53 092 5603",
   whatsapp: "233247083940",
   address: "Lapaz New Market Road, Accra, Ghana",
+  mapsUrl: "https://maps.app.goo.gl/rDj6poPuDPXpRUAm8",
   hours: [{ day: "Every Day", time: "Day & Night Services Available" }],
   social: {
     tiktok: "https://www.tiktok.com/@geniusgroomingparlour",
