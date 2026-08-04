@@ -1,10 +1,17 @@
 import { about } from "../data/shopData";
+import storefront from "../assets/storefront.jpg";
 
 export default function About() {
   return (
     <section id="about" className="scroll-mt-16 bg-white px-4 py-16">
       <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl font-bold">Our Story</h2>
+        <img
+          src={storefront}
+          alt="Genius Grooming Parlor storefront in Lapaz"
+          className="mx-auto aspect-video w-full rounded-2xl object-cover shadow-sm"
+        />
+
+        <h2 className="mt-8 text-3xl font-bold">Our Story</h2>
         <p className="mt-4 leading-relaxed text-gray-600">{about.story}</p>
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
