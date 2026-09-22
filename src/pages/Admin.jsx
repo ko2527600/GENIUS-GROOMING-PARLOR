@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { shop } from "../data/shopData";
+import logo from "../assets/logo.png";
 
 const STATUS_OPTIONS = ["new", "confirmed", "completed", "cancelled"];
 
@@ -16,6 +17,15 @@ function StatusBadge({ status }) {
       className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${STATUS_STYLES[status] ?? "bg-gray-100 text-gray-600"}`}
     >
       {status}
+    </span>
+  );
+}
+
+function Avatar({ name }) {
+  const initial = name?.trim()?.[0]?.toUpperCase() || "?";
+  return (
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-sm font-bold text-brand">
+      {initial}
     </span>
   );
 }
@@ -49,35 +59,48 @@ function LoginForm({ onLoggedIn }) {
   }
 
   return (
-    <section className="mx-auto flex min-h-[70svh] max-w-sm flex-col justify-center px-4 py-12">
-      <h1 className="text-center text-2xl font-bold">{shop.name} Admin</h1>
-      <p className="mt-2 text-center text-sm text-gray-500">
-        Sign in to view and manage bookings.
-      </p>
-
-      <form onSubmit={submit} className="mt-8 space-y-4">
-        <div>
-          <label className="text-sm font-medium">Password</label>
-          <input
-            type="password"
-            required
-            autoFocus
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+    <section className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-12">
+      <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
+        <div className="flex flex-col items-center text-center">
+          <img
+            src={logo}
+            alt={shop.name}
+            className="h-14 w-14 rounded-full object-cover shadow-sm"
           />
+          <h1 className="mt-4 text-xl font-bold">{shop.name}</h1>
+          <p className="mt-1 text-sm font-medium uppercase tracking-wide text-brand-dark">
+            Admin Dashboard
+          </p>
         </div>
 
-        {error && <p className="text-sm text-red">{error}</p>}
+        <form onSubmit={submit} className="mt-8 space-y-4">
+          <div>
+            <label className="text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              required
+              autoFocus
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-full bg-ink py-3 font-semibold text-white disabled:opacity-50"
-        >
-          {loading ? "Signing in..." : "Sign In"}
-        </button>
-      </form>
+          {error && (
+            <p className="rounded-lg bg-red/10 px-3 py-2 text-sm font-medium text-red">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-full bg-ink py-3 font-semibold text-white transition hover:bg-ink-soft disabled:opacity-50"
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+      </div>
     </section>
   );
 }
@@ -91,43 +114,52 @@ function BookingCard({ booking, onStatusChange }) {
   });
 
   return (
-    <div className="rounded-xl border border-gray-200 p-4 shadow-sm">
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-semibold">{booking.name}</p>
-          <a href={`tel:${booking.phone}`} className="text-sm text-gray-500 underline underline-offset-2">
-            {booking.phone}
-          </a>
+        <div className="flex items-center gap-3">
+          <Avatar name={booking.name} />
+          <div>
+            <p className="font-semibold">{booking.name}</p>
+            <a
+              href={`tel:${booking.phone}`}
+              className="text-sm text-gray-500 underline underline-offset-2"
+            >
+              {booking.phone}
+            </a>
+          </div>
         </div>
         <StatusBadge status={booking.status} />
       </div>
 
-      <dl className="mt-3 space-y-1 text-sm text-gray-600">
+      <dl className="mt-4 space-y-1.5 border-t border-gray-100 pt-4 text-sm text-gray-600">
         <div className="flex gap-2">
-          <dt className="font-medium text-gray-800">Service:</dt>
+          <dt className="w-24 shrink-0 font-medium text-gray-800">Service</dt>
           <dd>{booking.services}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="font-medium text-gray-800">Stylist:</dt>
+          <dt className="w-24 shrink-0 font-medium text-gray-800">Stylist</dt>
           <dd>{booking.stylist}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="font-medium text-gray-800">Time:</dt>
+          <dt className="w-24 shrink-0 font-medium text-gray-800">Time</dt>
           <dd>{booking.time}</dd>
         </div>
         {booking.payment && (
           <div className="flex gap-2">
-            <dt className="font-medium text-gray-800">Fee:</dt>
+            <dt className="w-24 shrink-0 font-medium text-gray-800">Fee</dt>
             <dd>{booking.payment} — check MoMo statement to confirm</dd>
           </div>
         )}
         <div className="flex gap-2">
-          <dt className="font-medium text-gray-800">Submitted:</dt>
+          <dt className="w-24 shrink-0 font-medium text-gray-800">Submitted</dt>
           <dd>{submittedAt}</dd>
         </div>
       </dl>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-4">
+        <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+          Status
+        </span>
         {STATUS_OPTIONS.map((s) => (
           <button
             key={s}
@@ -172,26 +204,32 @@ function CustomerCard({ customer }) {
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 p-4 shadow-sm">
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-semibold">{customer.name}</p>
-          <a href={`tel:${customer.phone}`} className="text-sm text-gray-500 underline underline-offset-2">
-            {customer.phone}
-          </a>
+        <div className="flex items-center gap-3">
+          <Avatar name={customer.name} />
+          <div>
+            <p className="font-semibold">{customer.name}</p>
+            <a
+              href={`tel:${customer.phone}`}
+              className="text-sm text-gray-500 underline underline-offset-2"
+            >
+              {customer.phone}
+            </a>
+          </div>
         </div>
-        <span className="text-xs text-gray-500">
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
           {customer.visits} visit{customer.visits === 1 ? "" : "s"}
         </span>
       </div>
 
-      <dl className="mt-3 space-y-1 text-sm text-gray-600">
+      <dl className="mt-4 space-y-1.5 border-t border-gray-100 pt-4 text-sm text-gray-600">
         <div className="flex gap-2">
-          <dt className="font-medium text-gray-800">Last visit:</dt>
+          <dt className="w-24 shrink-0 font-medium text-gray-800">Last visit</dt>
           <dd>{lastVisit}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="font-medium text-gray-800">Last service:</dt>
+          <dt className="w-24 shrink-0 font-medium text-gray-800">Last service</dt>
           <dd>{customer.lastServices}</dd>
         </div>
       </dl>
@@ -199,7 +237,7 @@ function CustomerCard({ customer }) {
       <button
         onClick={handleRemind}
         disabled={status === "sending" || status === "sent"}
-        className="mt-4 rounded-full border border-gray-300 px-4 py-2 text-xs font-semibold text-ink transition hover:border-ink disabled:cursor-default disabled:opacity-50"
+        className="mt-4 w-full rounded-full border border-gray-300 py-2 text-sm font-semibold text-ink transition hover:border-ink disabled:cursor-default disabled:opacity-50 sm:w-auto sm:px-4"
       >
         {status === "sending"
           ? "Sending..."
@@ -251,7 +289,7 @@ function CustomersView() {
         placeholder="Search by name or phone..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mt-4 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+        className="mt-4 w-full rounded-lg border border-gray-300 bg-white p-3 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
       />
 
       {error && <p className="mt-6 text-red">{error}</p>}
@@ -267,6 +305,15 @@ function CustomersView() {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function StatTile({ label, value, accent }) {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+      <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">{label}</p>
+      <p className={`mt-1 text-2xl font-bold ${accent ?? "text-ink"}`}>{value}</p>
     </div>
   );
 }
@@ -339,10 +386,30 @@ function Dashboard({ onLoggedOut }) {
   );
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{tab === "bookings" ? "Bookings" : "Customers"}</h1>
-        <div className="flex gap-3">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-ink text-white shadow-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+          <div className="flex items-center gap-3">
+            <img src={logo} alt={shop.name} className="h-9 w-9 rounded-full object-cover" />
+            <div>
+              <p className="font-bold leading-tight">{shop.name}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-brand">
+                Admin Dashboard
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-white/10"
+          >
+            Log Out
+          </button>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-5xl px-4 py-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold">{tab === "bookings" ? "Bookings" : "Customers"}</h1>
           {tab === "bookings" && (
             <button
               onClick={loadBookings}
@@ -351,78 +418,80 @@ function Dashboard({ onLoggedOut }) {
               Refresh
             </button>
           )}
-          <button
-            onClick={handleLogout}
-            className="text-sm font-semibold text-red underline underline-offset-4"
-          >
-            Log Out
-          </button>
         </div>
-      </div>
 
-      <div className="mt-4 flex gap-2">
-        {[
-          { id: "bookings", label: "Bookings" },
-          { id: "customers", label: "Customers" },
-        ].map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
-              tab === t.id
-                ? "border-ink bg-ink text-white"
-                : "border-gray-300 text-gray-600 hover:border-ink"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {tab === "customers" ? (
-        <CustomersView />
-      ) : (
-        <>
-          <input
-            type="search"
-            placeholder="Search by name or phone..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="mt-4 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
-          />
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {["all", ...STATUS_OPTIONS].map((s) => (
-              <button
-                key={s}
-                onClick={() => setFilter(s)}
-                className={`rounded-full border px-3 py-1.5 text-sm font-semibold capitalize transition ${
-                  filter === s
-                    ? "border-ink bg-ink text-white"
-                    : "border-gray-300 text-gray-600 hover:border-ink"
-                }`}
-              >
-                {s} {s !== "all" && counts[s] ? `(${counts[s]})` : ""}
-              </button>
-            ))}
+        {tab === "bookings" && (
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+            <StatTile label="Total" value={bookings.length} />
+            <StatTile label="New" value={counts.new ?? 0} accent="text-brand-dark" />
+            <StatTile label="Confirmed" value={counts.confirmed ?? 0} accent="text-blue-700" />
+            <StatTile label="Completed" value={counts.completed ?? 0} accent="text-green-700" />
+            <StatTile label="Cancelled" value={counts.cancelled ?? 0} accent="text-gray-500" />
           </div>
+        )}
 
-          {error && <p className="mt-6 text-red">{error}</p>}
+        <div className="mt-6 inline-flex rounded-full border border-gray-200 bg-white p-1 shadow-sm">
+          {[
+            { id: "bookings", label: "Bookings" },
+            { id: "customers", label: "Customers" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+                tab === t.id ? "bg-ink text-white" : "text-gray-600 hover:text-ink"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
 
-          {loading ? (
-            <p className="mt-8 text-center text-gray-500">Loading bookings...</p>
-          ) : filtered.length === 0 ? (
-            <p className="mt-8 text-center text-gray-500">No bookings found.</p>
-          ) : (
-            <div className="mt-6 space-y-4">
-              {filtered.map((b) => (
-                <BookingCard key={b.id} booking={b} onStatusChange={handleStatusChange} />
+        {tab === "customers" ? (
+          <CustomersView />
+        ) : (
+          <>
+            <input
+              type="search"
+              placeholder="Search by name or phone..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="mt-4 w-full rounded-lg border border-gray-300 bg-white p-3 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            />
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {["all", ...STATUS_OPTIONS].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setFilter(s)}
+                  className={`rounded-full border px-3 py-1.5 text-sm font-semibold capitalize transition ${
+                    filter === s
+                      ? "border-ink bg-ink text-white"
+                      : "border-gray-300 bg-white text-gray-600 hover:border-ink"
+                  }`}
+                >
+                  {s} {s !== "all" && counts[s] ? `(${counts[s]})` : ""}
+                </button>
               ))}
             </div>
-          )}
-        </>
-      )}
-    </section>
+
+            {error && <p className="mt-6 text-red">{error}</p>}
+
+            {loading ? (
+              <p className="mt-8 text-center text-gray-500">Loading bookings...</p>
+            ) : filtered.length === 0 ? (
+              <p className="mt-8 text-center text-gray-500">No bookings found.</p>
+            ) : (
+              <div className="mt-6 space-y-4">
+                {filtered.map((b) => (
+                  <BookingCard key={b.id} booking={b} onStatusChange={handleStatusChange} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </section>
+    </div>
   );
 }
 
@@ -439,7 +508,11 @@ export default function Admin() {
   }, []);
 
   if (checking) {
-    return <p className="py-16 text-center text-gray-500">Loading...</p>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
   }
 
   return authenticated ? (
