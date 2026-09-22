@@ -18,7 +18,7 @@ function serviceSummary(selectedServices, otherService) {
   return names.join(", ");
 }
 
-function buildMessage({ customer, barber, selectedServices, otherService, time }) {
+function buildMessage({ customer, barber, selectedServices, otherService, time, paymentRef }) {
   return (
     `New booking request - ${shop.name}\n` +
     `Name: ${customer.name}\n` +
@@ -26,7 +26,8 @@ function buildMessage({ customer, barber, selectedServices, otherService, time }
     `Stylist: ${barber?.name}\n` +
     `Service: ${serviceSummary(selectedServices, otherService)}\n` +
     `Time: ${time}\n` +
-    `Booking fee: ${payment.currency}${payment.amount} sent to ${payment.momoNumber} (${payment.momoName})`
+    `Booking fee: ${payment.currency}${payment.amount} sent to ${payment.momoNumber} (${payment.momoName})\n` +
+    `MoMo reference/sender name: ${paymentRef}`
   );
 }
 
@@ -47,6 +48,7 @@ export default function Booking() {
   const [otherService, setOtherService] = useState("");
   const [time, setTime] = useState(null);
   const [paid, setPaid] = useState(false);
+  const [paymentRef, setPaymentRef] = useState("");
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [done, setDone] = useState(false);
 
@@ -66,6 +68,7 @@ export default function Booking() {
     setOtherService("");
     setTime(null);
     setPaid(false);
+    setPaymentRef("");
     setCustomer({ name: "", phone: "" });
   }
 
@@ -73,7 +76,7 @@ export default function Booking() {
     (step === 0 && barber) ||
     (step === 1 && (selectedServices.length > 0 || otherService.trim())) ||
     (step === 2 && time) ||
-    (step === 3 && paid) ||
+    (step === 3 && paid && paymentRef.trim()) ||
     step === 4;
 
   function next() {
@@ -99,13 +102,20 @@ export default function Booking() {
         stylist: barber?.name,
         services: serviceSummary(selectedServices, otherService),
         time,
-        payment: `${payment.currency}${payment.amount} sent to ${payment.momoNumber}`,
+        payment: `${payment.currency}${payment.amount} sent to ${payment.momoNumber} (ref: ${paymentRef})`,
       }),
     }).catch(() => {});
   }
 
   if (done) {
-    const message = buildMessage({ customer, barber, selectedServices, otherService, time });
+    const message = buildMessage({
+      customer,
+      barber,
+      selectedServices,
+      otherService,
+      time,
+      paymentRef,
+    });
 
     return (
       <section className="mx-auto max-w-lg px-4 py-16 text-center">
@@ -294,6 +304,21 @@ export default function Booking() {
               </a>
             </div>
 
+            <div>
+              <label className="text-sm font-medium">
+                MoMo reference code or the name you sent it under
+              </label>
+              <input
+                value={paymentRef}
+                onChange={(e) => setPaymentRef(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+                placeholder="e.g. MP240922.1234 or Kofi Mensah"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                So we can match your payment to your booking.
+              </p>
+            </div>
+
             <label className="flex items-start gap-3 rounded-xl border border-gray-200 p-4">
               <input
                 type="checkbox"
@@ -306,6 +331,18 @@ export default function Booking() {
                 {payment.amount} booking fee to {payment.momoNumber}
               </span>
             </label>
+
+            <div className="rounded-xl bg-gray-50 p-4 text-center">
+              <p className="text-sm text-gray-600">
+                Then call us to confirm you've sent it and that you're on your way:
+              </p>
+              <a
+                href={`tel:${shop.phone.replace(/\s/g, "")}`}
+                className="mt-2 inline-block text-lg font-bold text-brand-dark"
+              >
+                {shop.phone}
+              </a>
+            </div>
           </div>
         )}
 
@@ -326,6 +363,9 @@ export default function Booking() {
                 <span className="font-semibold">Booking fee:</span>{" "}
                 {payment.currency}
                 {payment.amount} sent to {payment.momoNumber}
+              </p>
+              <p>
+                <span className="font-semibold">Reference:</span> {paymentRef}
               </p>
             </div>
 
