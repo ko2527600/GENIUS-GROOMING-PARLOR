@@ -40,8 +40,8 @@ export const reminderIntervalDays = 14;
 // tawk.to -> Administration -> Chat Widget -> "Direct Chat Link" /
 // widget code (the two IDs in the embed script's URL).
 export const liveChat = {
-  tawkToPropertyId: "",
-  tawkToWidgetId: "",
+  tawkToPropertyId: "6ab2eba56934013440e78641",
+  tawkToWidgetId: "1k35eh0bd",
 };
 
 // From her TikTok profile (@geniusgroomingparlour) as of Aug 2026 —
