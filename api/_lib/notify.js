@@ -7,6 +7,8 @@ const SMS_MESSAGES = {
     `Hi ${b.name}, ${shop.name} received your booking request for ${b.services} at ${b.time}. We'll confirm shortly!`,
   confirmed: (b) =>
     `Hi ${b.name}, your ${shop.name} booking for ${b.services} at ${b.time} is CONFIRMED. See you soon!`,
+  completed: (b) =>
+    `Hi ${b.name}, thank you for choosing ${shop.name}! We hope you loved your ${b.services}. See you again soon.`,
   reminder: (b) =>
     `Hi ${b.name}, it's been a while since your last visit to ${shop.name}! We'd love to see you again - book your next appointment anytime.`,
 };
@@ -14,12 +16,14 @@ const SMS_MESSAGES = {
 const WHATSAPP_TEMPLATES = {
   received: process.env.WHATSAPP_TEMPLATE_RECEIVED,
   confirmed: process.env.WHATSAPP_TEMPLATE_CONFIRMED,
+  completed: process.env.WHATSAPP_TEMPLATE_COMPLETED,
   reminder: process.env.WHATSAPP_TEMPLATE_REMINDER,
 };
 
 const WHATSAPP_PARAMS = {
   received: (b) => [b.name, b.services, b.time],
   confirmed: (b) => [b.name, b.services, b.time],
+  completed: (b) => [b.name, b.services],
   reminder: (b) => [b.name],
 };
 

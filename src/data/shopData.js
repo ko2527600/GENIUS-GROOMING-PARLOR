@@ -29,6 +29,21 @@ export const payment = {
   momoName: "Palour Genius Grooming",
 };
 
+// How long after a customer's last visit the system auto-sends a
+// "come back" SMS reminder (see api/cron/reminders.js). Runs once a
+// day, so an exact match isn't required — it fires on the first daily
+// check on or after this many days have passed.
+export const reminderIntervalDays = 14;
+
+// Live chat widget (Tawk.to) for on-site customer enquiries. Leave
+// both blank to keep the widget off. Get these from
+// tawk.to -> Administration -> Chat Widget -> "Direct Chat Link" /
+// widget code (the two IDs in the embed script's URL).
+export const liveChat = {
+  tawkToPropertyId: "",
+  tawkToWidgetId: "",
+};
+
 // From her TikTok profile (@geniusgroomingparlour) as of Aug 2026 —
 // update if she shares fresher numbers.
 export const tiktokStats = {

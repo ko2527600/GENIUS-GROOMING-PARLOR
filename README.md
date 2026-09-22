@@ -88,3 +88,51 @@ dashboard under the project's Domains settings — no code changes needed.
 Almost everything customer-facing (shop name, tagline, phone, address, hours,
 services, prices, about text) lives in `src/data/shopData.js`. Update that
 file and the whole site reflects the change.
+
+## Admin Dashboard (`/admin`)
+
+Requires these environment variables set on Vercel (Project → Settings →
+Environment Variables):
+
+- `ADMIN_PASSWORD` — the password used to log in
+- `SESSION_SECRET` — any long random string, used to sign the login session
+- A Vercel Blob store connected to the project (bookings are saved via
+  `@vercel/blob`)
+
+## SMS / WhatsApp Notifications
+
+Booking status changes (received, confirmed, completed) and the "come back"
+reminder text customers automatically via
+[Africa's Talking](https://africastalking.com/) SMS, with an optional
+WhatsApp template as a first attempt. Configure:
+
+- `AT_API_KEY`, `AT_USERNAME` — Africa's Talking credentials (`sandbox` for
+  testing)
+- `AT_SENDER_ID` — optional approved sender ID
+- `WHATSAPP_TEMPLATE_RECEIVED` / `_CONFIRMED` / `_COMPLETED` / `_REMINDER` —
+  optional, only needed if using WhatsApp templates instead of plain SMS
+
+Without these set, notifications silently no-op — bookings still work.
+
+### Automatic re-engagement reminders
+
+`api/cron/reminders.js` runs daily (see `vercel.json` → `crons`) and texts
+any customer who hasn't visited in `reminderIntervalDays` (set in
+`shopData.js`, default 14 days) since their last booking. Vercel Cron on the
+Hobby plan is limited to once a day, which this already matches.
+
+Set `CRON_SECRET` on Vercel to stop anyone else from triggering this
+endpoint — Vercel automatically sends it as the `Authorization` header when
+invoking the cron.
+
+## Live Chat / Enquiries
+
+The site can show a [Tawk.to](https://www.tawk.to/) live chat widget so
+visitors can message the shop directly and the owner can reply from the
+Tawk.to phone app. It's off by default. To turn it on:
+
+1. Sign up free at [tawk.to](https://www.tawk.to/) and create a property
+   for the business
+2. Go to Administration → Chat Widget → the embed code will contain a URL
+   like `https://embed.tawk.to/<propertyId>/<widgetId>`
+3. Paste those two values into `liveChat` in `src/data/shopData.js`

@@ -62,3 +62,22 @@ export async function updateBookingStatus(id, status) {
 
   return booking;
 }
+
+// Marks that a "come back" reminder was already sent for this booking,
+// so the reminders cron doesn't nag the same customer every day once
+// they're overdue.
+export async function markReminderSent(id) {
+  const pathname = `${PREFIX}${id}.json`;
+  const booking = await readBookingBlob(pathname);
+  if (!booking) return null;
+
+  booking.reminderSentAt = new Date().toISOString();
+  await put(pathname, JSON.stringify(booking), {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+  });
+
+  return booking;
+}
