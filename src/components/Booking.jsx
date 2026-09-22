@@ -4,12 +4,13 @@ import {
   services,
   timeSlots,
   shop,
+  payment,
   groupServicesByCategory,
 } from "../data/shopData";
 
 const serviceGroups = groupServicesByCategory(services);
 
-const STEPS = ["Stylist", "Service", "Time", "Confirm"];
+const STEPS = ["Stylist", "Service", "Time", "Payment", "Confirm"];
 
 function serviceSummary(selectedServices, otherService) {
   const names = selectedServices.map((s) => s.name);
@@ -24,7 +25,8 @@ function buildMessage({ customer, barber, selectedServices, otherService, time }
     `Phone: ${customer.phone}\n` +
     `Stylist: ${barber?.name}\n` +
     `Service: ${serviceSummary(selectedServices, otherService)}\n` +
-    `Time: ${time}`
+    `Time: ${time}\n` +
+    `Booking fee: ${payment.currency}${payment.amount} sent to ${payment.momoNumber} (${payment.momoName})`
   );
 }
 
@@ -44,6 +46,7 @@ export default function Booking() {
   const [selectedServices, setSelectedServices] = useState([]);
   const [otherService, setOtherService] = useState("");
   const [time, setTime] = useState(null);
+  const [paid, setPaid] = useState(false);
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [done, setDone] = useState(false);
 
@@ -62,6 +65,7 @@ export default function Booking() {
     setSelectedServices([]);
     setOtherService("");
     setTime(null);
+    setPaid(false);
     setCustomer({ name: "", phone: "" });
   }
 
@@ -69,7 +73,8 @@ export default function Booking() {
     (step === 0 && barber) ||
     (step === 1 && (selectedServices.length > 0 || otherService.trim())) ||
     (step === 2 && time) ||
-    step === 3;
+    (step === 3 && paid) ||
+    step === 4;
 
   function next() {
     if (step < STEPS.length - 1) setStep(step + 1);
@@ -94,6 +99,7 @@ export default function Booking() {
         stylist: barber?.name,
         services: serviceSummary(selectedServices, otherService),
         time,
+        payment: `${payment.currency}${payment.amount} sent to ${payment.momoNumber}`,
       }),
     }).catch(() => {});
   }
@@ -114,6 +120,11 @@ export default function Booking() {
           <p className="mt-2 text-sm text-gray-500">
             Tap below to send your booking details straight to{" "}
             {shop.name} — one tap and it's sent.
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            Make sure your {payment.currency}
+            {payment.amount} booking fee was sent to {payment.momoNumber} — we'll
+            confirm your slot once it's received.
           </p>
 
           <div className="mt-6 flex flex-col gap-3">
@@ -259,6 +270,46 @@ export default function Booking() {
         )}
 
         {step === 3 && (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-brand/40 bg-brand/5 p-5 text-center">
+              <p className="text-sm text-gray-600">Booking fee (required to confirm)</p>
+              <p className="mt-1 text-3xl font-bold">
+                {payment.currency}
+                {payment.amount}
+              </p>
+              <p className="mt-4 text-sm text-gray-600">
+                Send via MTN Mobile Money to
+              </p>
+              <p className="mt-1 text-xl font-bold tracking-wide">
+                {payment.momoNumber}
+              </p>
+              <p className="text-sm text-gray-500">
+                Recipient name: {payment.momoName}
+              </p>
+              <a
+                href={`tel:${payment.momoNumber}`}
+                className="mt-3 inline-block text-sm font-semibold text-brand-dark underline underline-offset-4"
+              >
+                Tap to call/save this number
+              </a>
+            </div>
+
+            <label className="flex items-start gap-3 rounded-xl border border-gray-200 p-4">
+              <input
+                type="checkbox"
+                checked={paid}
+                onChange={(e) => setPaid(e.target.checked)}
+                className="mt-1 h-5 w-5 shrink-0 accent-brand"
+              />
+              <span className="text-sm font-medium">
+                I have sent the {payment.currency}
+                {payment.amount} booking fee to {payment.momoNumber}
+              </span>
+            </label>
+          </div>
+        )}
+
+        {step === 4 && (
           <form onSubmit={submit} className="space-y-4">
             <div className="rounded-xl bg-gray-50 p-4 text-sm">
               <p>
@@ -270,6 +321,11 @@ export default function Booking() {
               </p>
               <p>
                 <span className="font-semibold">Time:</span> {time}
+              </p>
+              <p>
+                <span className="font-semibold">Booking fee:</span>{" "}
+                {payment.currency}
+                {payment.amount} sent to {payment.momoNumber}
               </p>
             </div>
 
@@ -310,7 +366,7 @@ export default function Booking() {
         )}
       </div>
 
-      {step < 3 && (
+      {step < 4 && (
         <div className="mt-8 flex justify-between">
           <button
             onClick={back}

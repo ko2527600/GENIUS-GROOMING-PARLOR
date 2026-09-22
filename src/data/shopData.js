@@ -18,6 +18,17 @@ export const shop = {
   },
 };
 
+// Flat booking fee, paid manually via MTN MoMo before a booking is
+// confirmed. There's no live payment API yet — the customer sends the
+// money themselves and confirms they did, and the shop reconciles it
+// against their MoMo statement (see the admin dashboard).
+export const payment = {
+  amount: 50,
+  currency: "GH₵",
+  momoNumber: "0598618320",
+  momoName: "Palour Genius Grooming",
+};
+
 // From her TikTok profile (@geniusgroomingparlour) as of Aug 2026 —
 // update if she shares fresher numbers.
 export const tiktokStats = {

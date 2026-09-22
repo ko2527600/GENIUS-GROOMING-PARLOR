@@ -115,6 +115,12 @@ function BookingCard({ booking, onStatusChange }) {
           <dt className="font-medium text-gray-800">Time:</dt>
           <dd>{booking.time}</dd>
         </div>
+        {booking.payment && (
+          <div className="flex gap-2">
+            <dt className="font-medium text-gray-800">Fee:</dt>
+            <dd>{booking.payment} — check MoMo statement to confirm</dd>
+          </div>
+        )}
         <div className="flex gap-2">
           <dt className="font-medium text-gray-800">Submitted:</dt>
           <dd>{submittedAt}</dd>
