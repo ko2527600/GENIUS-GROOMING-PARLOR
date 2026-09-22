@@ -38,19 +38,26 @@ export const about = {
   ],
 };
 
-// Real service list from the client, grouped so the booking flow and
-// homepage can show small category headings instead of one flat list.
-// No confirmed prices/durations yet — booking asks the customer to
-// confirm those over WhatsApp/SMS instead of showing invented numbers.
+// Real service list from the client's in-store signage, grouped so the
+// booking flow and homepage can show small category headings instead of
+// one flat list. No confirmed prices/durations yet — booking asks the
+// customer to confirm those over WhatsApp/SMS instead of showing invented
+// numbers.
 export const services = [
-  { id: "haircut", name: "Hair Cut", category: "Hair" },
+  { id: "haircut", name: "Haircut", category: "Hair" },
   { id: "coloring", name: "Hair Coloring", category: "Hair" },
+  { id: "pixie-cut", name: "Pixie Cut (Tonging)", category: "Hair" },
   { id: "dreadlocks", name: "Dreadlocks", category: "Hair" },
-  { id: "braids", name: "Braids", category: "Hair" },
-  { id: "ponytails", name: "Ponytails", category: "Hair" },
-  { id: "nails", name: "Nails (Manicure & Pedicure)", category: "Nails" },
+  { id: "braiding", name: "Braiding", category: "Hair" },
+  { id: "frontal-installation", name: "Frontal Installation", category: "Hair" },
+  { id: "nails-artistry", name: "Nails Artistry", category: "Nails" },
+  { id: "pedicure", name: "Pedicure", category: "Nails" },
+  { id: "manicure", name: "Manicure", category: "Nails" },
+  { id: "brows", name: "Brows", category: "Beauty" },
+  { id: "lashes", name: "Lashes", category: "Beauty" },
   { id: "facials", name: "Facials", category: "Beauty" },
-  { id: "makeup", name: "Makeup", category: "Beauty" },
+  { id: "makeup", name: "Make Up", category: "Beauty" },
+  { id: "waxing", name: "Waxing", category: "Beauty" },
 ];
 
 // Groups `services` into { category, items } buckets, preserving order
