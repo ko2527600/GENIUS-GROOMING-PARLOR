@@ -29,6 +29,9 @@ export default async function handler(req, res) {
     if (status === "confirmed") {
       await notifyCustomer("confirmed", booking);
     }
+    if (status === "completed") {
+      await notifyCustomer("completed", booking);
+    }
     return res.status(200).json({ ok: true, booking });
   } catch (err) {
     console.error("Failed to update booking:", err);
