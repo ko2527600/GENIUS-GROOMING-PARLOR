@@ -18,6 +18,7 @@ export async function createBooking(data) {
     stylist: data.stylist,
     services: data.services,
     time: data.time,
+    payment: data.payment,
     status: "new",
     createdAt: new Date().toISOString(),
   };
