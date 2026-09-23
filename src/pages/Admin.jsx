@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { shop } from "../data/shopData";
+import { shop, payment } from "../data/shopData";
 import logo from "../assets/logo.png";
 
 const STATUS_OPTIONS = ["new", "confirmed", "completed", "cancelled"];
@@ -385,10 +385,22 @@ function Dashboard({ onLoggedOut }) {
     {},
   );
 
+  // Revenue is the flat booking fee times every non-cancelled booking —
+  // the fee is collected up front at booking time regardless of status.
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const weekAgo = new Date(startOfToday.getTime() - 6 * 24 * 60 * 60 * 1000);
+  const paidBookings = bookings.filter((b) => b.status !== "cancelled");
+  const revenueSince = (cutoff) =>
+    paidBookings.filter((b) => new Date(b.createdAt) >= cutoff).length * payment.amount;
+  const revenueToday = revenueSince(startOfToday);
+  const revenueWeek = revenueSince(weekAgo);
+  const revenueAllTime = paidBookings.length * payment.amount;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-ink text-white shadow-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-4">
           <div className="flex items-center gap-3">
             <img src={logo} alt={shop.name} className="h-9 w-9 rounded-full object-cover" />
             <div>
@@ -404,6 +416,20 @@ function Dashboard({ onLoggedOut }) {
           >
             Log Out
           </button>
+        </div>
+        <div className="border-t border-white/10 bg-white/5">
+          <a
+            href={shop.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-2 text-sm text-gray-200 transition hover:text-brand"
+          >
+            <span aria-hidden="true">📍</span>
+            <span className="truncate">{shop.address}</span>
+            <span className="ml-auto shrink-0 font-semibold underline underline-offset-2">
+              Get Directions
+            </span>
+          </a>
         </div>
       </header>
 
@@ -421,13 +447,33 @@ function Dashboard({ onLoggedOut }) {
         </div>
 
         {tab === "bookings" && (
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
-            <StatTile label="Total" value={bookings.length} />
-            <StatTile label="New" value={counts.new ?? 0} accent="text-brand-dark" />
-            <StatTile label="Confirmed" value={counts.confirmed ?? 0} accent="text-blue-700" />
-            <StatTile label="Completed" value={counts.completed ?? 0} accent="text-green-700" />
-            <StatTile label="Cancelled" value={counts.cancelled ?? 0} accent="text-gray-500" />
-          </div>
+          <>
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              <StatTile
+                label="Revenue Today"
+                value={`${payment.currency}${revenueToday}`}
+                accent="text-green-700"
+              />
+              <StatTile
+                label="Revenue This Week"
+                value={`${payment.currency}${revenueWeek}`}
+                accent="text-green-700"
+              />
+              <StatTile
+                label="Revenue All-Time"
+                value={`${payment.currency}${revenueAllTime}`}
+                accent="text-green-700"
+              />
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-5">
+              <StatTile label="Total" value={bookings.length} />
+              <StatTile label="New" value={counts.new ?? 0} accent="text-brand-dark" />
+              <StatTile label="Confirmed" value={counts.confirmed ?? 0} accent="text-blue-700" />
+              <StatTile label="Completed" value={counts.completed ?? 0} accent="text-green-700" />
+              <StatTile label="Cancelled" value={counts.cancelled ?? 0} accent="text-gray-500" />
+            </div>
+          </>
         )}
 
         <div className="mt-6 inline-flex rounded-full border border-gray-200 bg-white p-1 shadow-sm">
