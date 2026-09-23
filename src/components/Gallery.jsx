@@ -16,7 +16,6 @@ import gallery12 from "../assets/gallery/gallery-12.jpg";
 import gallery13 from "../assets/gallery/gallery-13.jpg";
 import gallery14 from "../assets/gallery/gallery-14.jpg";
 import gallery15 from "../assets/gallery/gallery-15.jpg";
-import gallery16 from "../assets/gallery/gallery-16.jpg";
 import gallery17 from "../assets/gallery/gallery-17.jpg";
 import gallery18 from "../assets/gallery/gallery-18.jpg";
 import gallery19 from "../assets/gallery/gallery-19.jpg";
@@ -119,7 +118,6 @@ const photos = [
   { src: gallery13, category: "Hair" },
   { src: gallery14, category: "Hair" },
   { src: gallery15, category: "Hair" },
-  { src: gallery16, category: "Hair" },
   { src: gallery17, category: "Hair" },
   { src: gallery18, category: "Hair" },
   { src: gallery19, category: "Hair" },
