@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import BookingPage from './pages/BookingPage'
 import Admin from './pages/Admin'
 import LiveChat from './components/LiveChat'
+import WelcomePopup from './components/WelcomePopup'
 import ScrollToHash from './ScrollToHash'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <ScrollToHash />
       {!isAdmin && <Navbar />}
       {!isAdmin && <LiveChat />}
+      {pathname === '/' && <WelcomePopup />}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
