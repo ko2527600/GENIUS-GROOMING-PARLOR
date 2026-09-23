@@ -28,7 +28,7 @@ export default function BeforeAfterSlider({ before, after, beforeLabel = "Before
   return (
     <div
       ref={containerRef}
-      className="relative aspect-square w-full max-w-sm touch-none select-none overflow-hidden rounded-2xl shadow-lg"
+      className="relative aspect-square w-full max-w-sm touch-pan-y select-none overflow-hidden rounded-2xl shadow-lg"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={stopDragging}
