@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LazyVideo from "./LazyVideo";
+import Lightbox from "./Lightbox";
 import gallery1 from "../assets/gallery/gallery-1.jpg";
 import gallery2 from "../assets/gallery/gallery-2.jpg";
 import gallery3 from "../assets/gallery/gallery-3.jpg";
@@ -185,12 +186,20 @@ const TABS = ["All", "Hair", "Nails", "Beauty"];
 
 export default function Gallery() {
   const [activeTab, setActiveTab] = useState("All");
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   const filteredVideos =
     activeTab === "All" ? videos : videos.filter((v) => v.category === activeTab);
   const filteredPhotos =
     activeTab === "All" ? photos : photos.filter((p) => p.category === activeTab);
   const isEmpty = filteredVideos.length === 0 && filteredPhotos.length === 0;
+  const lightboxImages = filteredPhotos.map((p) => p.src);
+
+  function navigateLightbox(delta) {
+    setLightboxIndex(
+      (i) => (i + delta + lightboxImages.length) % lightboxImages.length,
+    );
+  }
 
   return (
     <section className="bg-gray-50 px-4 py-16">
@@ -232,17 +241,30 @@ export default function Gallery() {
               />
             ))}
             {filteredPhotos.map((p, i) => (
-              <img
+              <button
                 key={`${activeTab}-p${i}`}
-                src={p.src}
-                alt="Genius Grooming Parlor haircut"
-                loading="lazy"
-                className="aspect-square w-full rounded-xl object-cover shadow-sm"
-              />
+                onClick={() => setLightboxIndex(i)}
+                aria-label="View photo"
+                className="aspect-square w-full overflow-hidden rounded-xl shadow-sm"
+              >
+                <img
+                  src={p.src}
+                  alt="Genius Grooming Parlor haircut"
+                  loading="lazy"
+                  className="h-full w-full object-cover transition hover:scale-105"
+                />
+              </button>
             ))}
           </div>
         )}
       </div>
+
+      <Lightbox
+        images={lightboxImages}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={navigateLightbox}
+      />
     </section>
   );
 }

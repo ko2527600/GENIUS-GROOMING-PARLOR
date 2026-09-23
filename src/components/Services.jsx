@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { services, groupServicesByCategory } from "../data/shopData";
 import LazyVideo from "./LazyVideo";
+import Lightbox from "./Lightbox";
 import braidingGallery from "../assets/gallery/gallery-21.jpg";
 import braidingGallery2 from "../assets/gallery/gallery-22.jpg";
 import braidingGallery3 from "../assets/gallery/gallery-23.jpg";
@@ -144,7 +145,7 @@ const serviceMedia = {
   ],
 };
 
-function ServiceMedia({ items }) {
+function ServiceMedia({ items, onPhotoClick }) {
   if (!items || items.length === 0) {
     return (
       <p className="p-4 text-sm text-gray-500">
@@ -153,26 +154,39 @@ function ServiceMedia({ items }) {
     );
   }
 
+  let photoIndex = -1;
+
   return (
     <div className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-4">
-      {items.map((item, i) =>
-        item.type === "video" ? (
-          <LazyVideo
+      {items.map((item, i) => {
+        if (item.type === "video") {
+          return (
+            <LazyVideo
+              key={i}
+              mp4={item.mp4}
+              poster={item.poster}
+              className="aspect-square w-full overflow-hidden rounded-lg shadow-sm"
+            />
+          );
+        }
+        photoIndex += 1;
+        const thisPhotoIndex = photoIndex;
+        return (
+          <button
             key={i}
-            mp4={item.mp4}
-            poster={item.poster}
+            onClick={() => onPhotoClick(thisPhotoIndex)}
+            aria-label="View photo"
             className="aspect-square w-full overflow-hidden rounded-lg shadow-sm"
-          />
-        ) : (
-          <img
-            key={i}
-            src={item.src}
-            alt=""
-            loading="lazy"
-            className="aspect-square w-full rounded-lg object-cover shadow-sm"
-          />
-        ),
-      )}
+          >
+            <img
+              src={item.src}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover transition hover:scale-105"
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -180,6 +194,16 @@ function ServiceMedia({ items }) {
 export default function Services() {
   const [openId, setOpenId] = useState(null);
   const [activeTab, setActiveTab] = useState("All");
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+
+  const openPhotos = (serviceMedia[openId] ?? []).filter((item) => item.type === "photo");
+  const lightboxImages = openPhotos.map((p) => p.src);
+
+  function navigateLightbox(delta) {
+    setLightboxIndex(
+      (i) => (i + delta + lightboxImages.length) % lightboxImages.length,
+    );
+  }
 
   const visibleGroups =
     activeTab === "All"
@@ -225,7 +249,10 @@ export default function Services() {
                       className="overflow-hidden rounded-xl border border-gray-200 shadow-sm"
                     >
                       <button
-                        onClick={() => setOpenId(open ? null : s.id)}
+                        onClick={() => {
+                          setOpenId(open ? null : s.id);
+                          setLightboxIndex(null);
+                        }}
                         aria-expanded={open}
                         className="flex w-full items-center justify-between gap-3 p-5 text-left"
                       >
@@ -248,7 +275,10 @@ export default function Services() {
                       </button>
                       {open && (
                         <div className="border-t border-gray-100">
-                          <ServiceMedia items={serviceMedia[s.id]} />
+                          <ServiceMedia
+                            items={serviceMedia[s.id]}
+                            onPhotoClick={setLightboxIndex}
+                          />
                         </div>
                       )}
                     </div>
@@ -267,6 +297,13 @@ export default function Services() {
           and we'll confirm pricing with you directly.
         </p>
       </div>
+
+      <Lightbox
+        images={lightboxImages}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={navigateLightbox}
+      />
     </section>
   );
 }
