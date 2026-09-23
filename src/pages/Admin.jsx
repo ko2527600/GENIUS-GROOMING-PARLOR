@@ -309,6 +309,73 @@ function CustomersView() {
   );
 }
 
+function InsightsView() {
+  const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/api/quiz-answers");
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          setError(data.error || "Failed to load quiz answers");
+          return;
+        }
+        setAnswers(data.answers);
+      } catch {
+        setError("Network error - please try again");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const counts = new Map();
+  for (const a of answers) {
+    counts.set(a.serviceName, (counts.get(a.serviceName) || 0) + 1);
+  }
+  const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  const maxCount = ranked[0]?.[1] ?? 0;
+
+  if (error) return <p className="mt-6 text-red">{error}</p>;
+  if (loading) return <p className="mt-8 text-center text-gray-500">Loading...</p>;
+
+  return (
+    <div className="mt-6">
+      <p className="text-sm text-gray-500">
+        What visitors ask the "Find Your Style" quiz for — use this to spot
+        demand for services you don't push as hard, or ones to promote more.
+      </p>
+
+      {ranked.length === 0 ? (
+        <p className="mt-8 text-center text-gray-500">No quiz answers yet.</p>
+      ) : (
+        <div className="mt-6 space-y-3">
+          {ranked.map(([name, count]) => (
+            <div key={name} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-semibold">{name}</span>
+                <span className="text-gray-500">{count}</span>
+              </div>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                <div
+                  className="h-full rounded-full bg-brand"
+                  style={{ width: `${(count / maxCount) * 100}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StatTile({ label, value, accent }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
@@ -319,7 +386,7 @@ function StatTile({ label, value, accent }) {
 }
 
 function Dashboard({ onLoggedOut }) {
-  const [tab, setTab] = useState("bookings"); // bookings | customers
+  const [tab, setTab] = useState("bookings"); // bookings | customers | insights
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -435,7 +502,9 @@ function Dashboard({ onLoggedOut }) {
 
       <section className="mx-auto max-w-5xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-bold">{tab === "bookings" ? "Bookings" : "Customers"}</h1>
+          <h1 className="text-2xl font-bold">
+            {tab === "bookings" ? "Bookings" : tab === "customers" ? "Customers" : "Interest"}
+          </h1>
           {tab === "bookings" && (
             <button
               onClick={loadBookings}
@@ -480,6 +549,7 @@ function Dashboard({ onLoggedOut }) {
           {[
             { id: "bookings", label: "Bookings" },
             { id: "customers", label: "Customers" },
+            { id: "insights", label: "Interest" },
           ].map((t) => (
             <button
               key={t.id}
@@ -495,6 +565,8 @@ function Dashboard({ onLoggedOut }) {
 
         {tab === "customers" ? (
           <CustomersView />
+        ) : tab === "insights" ? (
+          <InsightsView />
         ) : (
           <>
             <input
