@@ -26,6 +26,16 @@ import gallery24 from "../assets/gallery/gallery-24.jpg";
 import gallery25 from "../assets/gallery/gallery-25.jpg";
 import gallery26 from "../assets/gallery/gallery-26.jpg";
 import gallery27 from "../assets/gallery/gallery-27.jpg";
+import gallery28 from "../assets/gallery/gallery-28.jpg";
+import gallery29 from "../assets/gallery/gallery-29.jpg";
+import gallery30 from "../assets/gallery/gallery-30.jpg";
+import gallery31 from "../assets/gallery/gallery-31.jpg";
+import gallery32 from "../assets/gallery/gallery-32.jpg";
+import gallery33 from "../assets/gallery/gallery-33.jpg";
+import gallery34 from "../assets/gallery/gallery-34.jpg";
+import gallery35 from "../assets/gallery/gallery-35.jpg";
+import gallery36 from "../assets/gallery/gallery-36.jpg";
+import gallery37 from "../assets/gallery/gallery-37.jpg";
 import process1Webm from "../assets/video/process-1.webm";
 import process1Mp4 from "../assets/video/process-1.mp4";
 import process1Poster from "../assets/video/process-1-poster.jpg";
@@ -60,6 +70,26 @@ import braiding11Mp4 from "../assets/video/braiding-11.mp4";
 import braiding11Poster from "../assets/video/braiding-11-poster.jpg";
 import braiding12Mp4 from "../assets/video/braiding-12.mp4";
 import braiding12Poster from "../assets/video/braiding-12-poster.jpg";
+import nails1Mp4 from "../assets/video/nails-1.mp4";
+import nails1Poster from "../assets/video/nails-1-poster.jpg";
+import nails2Mp4 from "../assets/video/nails-2.mp4";
+import nails2Poster from "../assets/video/nails-2-poster.jpg";
+import nails3Mp4 from "../assets/video/nails-3.mp4";
+import nails3Poster from "../assets/video/nails-3-poster.jpg";
+import nails4Mp4 from "../assets/video/nails-4.mp4";
+import nails4Poster from "../assets/video/nails-4-poster.jpg";
+import nails5Mp4 from "../assets/video/nails-5.mp4";
+import nails5Poster from "../assets/video/nails-5-poster.jpg";
+import nails6Mp4 from "../assets/video/nails-6.mp4";
+import nails6Poster from "../assets/video/nails-6-poster.jpg";
+import nails7Mp4 from "../assets/video/nails-7.mp4";
+import nails7Poster from "../assets/video/nails-7-poster.jpg";
+import nails8Mp4 from "../assets/video/nails-8.mp4";
+import nails8Poster from "../assets/video/nails-8-poster.jpg";
+import nails9Mp4 from "../assets/video/nails-9.mp4";
+import nails9Poster from "../assets/video/nails-9-poster.jpg";
+import nails10Mp4 from "../assets/video/nails-10.mp4";
+import nails10Poster from "../assets/video/nails-10-poster.jpg";
 
 const photos = [
   gallery1,
@@ -89,6 +119,16 @@ const photos = [
   gallery25,
   gallery26,
   gallery27,
+  gallery28,
+  gallery29,
+  gallery30,
+  gallery31,
+  gallery32,
+  gallery33,
+  gallery34,
+  gallery35,
+  gallery36,
+  gallery37,
 ];
 
 const videos = [
@@ -108,6 +148,16 @@ const videos = [
   { mp4: braiding12Mp4, poster: braiding12Poster },
   { mp4: haircut1Mp4, poster: haircut1Poster },
   { mp4: haircut2Mp4, poster: haircut2Poster },
+  { mp4: nails1Mp4, poster: nails1Poster },
+  { mp4: nails2Mp4, poster: nails2Poster },
+  { mp4: nails3Mp4, poster: nails3Poster },
+  { mp4: nails4Mp4, poster: nails4Poster },
+  { mp4: nails5Mp4, poster: nails5Poster },
+  { mp4: nails6Mp4, poster: nails6Poster },
+  { mp4: nails7Mp4, poster: nails7Poster },
+  { mp4: nails8Mp4, poster: nails8Poster },
+  { mp4: nails9Mp4, poster: nails9Poster },
+  { mp4: nails10Mp4, poster: nails10Poster },
 ];
 
 export default function Gallery() {
