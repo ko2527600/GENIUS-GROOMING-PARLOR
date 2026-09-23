@@ -19,12 +19,19 @@ import gallery17 from "../assets/gallery/gallery-17.jpg";
 import gallery18 from "../assets/gallery/gallery-18.jpg";
 import gallery19 from "../assets/gallery/gallery-19.jpg";
 import gallery20 from "../assets/gallery/gallery-20.jpg";
+import gallery21 from "../assets/gallery/gallery-21.jpg";
 import process1Webm from "../assets/video/process-1.webm";
 import process1Mp4 from "../assets/video/process-1.mp4";
 import process1Poster from "../assets/video/process-1-poster.jpg";
 import process2Webm from "../assets/video/process-2.webm";
 import process2Mp4 from "../assets/video/process-2.mp4";
 import process2Poster from "../assets/video/process-2-poster.jpg";
+import braiding1Mp4 from "../assets/video/braiding-1.mp4";
+import braiding1Poster from "../assets/video/braiding-1-poster.jpg";
+import braiding2Mp4 from "../assets/video/braiding-2.mp4";
+import braiding2Poster from "../assets/video/braiding-2-poster.jpg";
+import braiding3Mp4 from "../assets/video/braiding-3.mp4";
+import braiding3Poster from "../assets/video/braiding-3-poster.jpg";
 
 const photos = [
   gallery1,
@@ -47,11 +54,15 @@ const photos = [
   gallery18,
   gallery19,
   gallery20,
+  gallery21,
 ];
 
 const videos = [
   { webm: process1Webm, mp4: process1Mp4, poster: process1Poster },
   { webm: process2Webm, mp4: process2Mp4, poster: process2Poster },
+  { mp4: braiding1Mp4, poster: braiding1Poster },
+  { mp4: braiding2Mp4, poster: braiding2Poster },
+  { mp4: braiding3Mp4, poster: braiding3Poster },
 ];
 
 export default function Gallery() {
