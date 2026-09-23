@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { shop } from "../data/shopData";
+import showcasePhoto from "../assets/gallery/gallery-25.jpg";
 
 const STORAGE_KEY = "ggp_welcome_seen";
 const DELAY_MS = 3000;
@@ -47,39 +48,46 @@ export default function WelcomePopup() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+        className="w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-2xl"
       >
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="text-xl font-bold">{shop.tagline}</h2>
+        <div className="relative">
+          <img
+            src={showcasePhoto}
+            alt={`${shop.name} finished work`}
+            className="h-48 w-full object-cover"
+          />
           <button
             onClick={close}
             aria-label="Close"
-            className="shrink-0 text-xl leading-none text-gray-400 hover:text-ink"
+            className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-lg leading-none text-white hover:bg-black/70"
           >
             &times;
           </button>
         </div>
-        <p className="mt-2 text-sm text-gray-600">
-          Welcome to {shop.name}! Book your appointment now, or join our
-          WhatsApp channel for style updates and offers.
-        </p>
-        <div className="mt-5 flex flex-col gap-3">
-          <Link
-            to="/booking"
-            onClick={close}
-            className="rounded-full bg-red px-6 py-3 text-center font-semibold text-white hover:bg-red-dark"
-          >
-            Book Now
-          </Link>
-          <a
-            href={shop.social.whatsappChannel}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={close}
-            className="rounded-full bg-[#25D366] px-6 py-3 text-center font-semibold text-white hover:opacity-90"
-          >
-            Join Our WhatsApp Channel
-          </a>
+        <div className="p-6">
+          <h2 className="text-xl font-bold">See what we can offer you</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            At <span className="font-semibold text-ink">{shop.name}</span>,
+            we are the best in making you beautiful.
+          </p>
+          <div className="mt-5 flex flex-col gap-3">
+            <Link
+              to="/booking"
+              onClick={close}
+              className="rounded-full bg-red px-6 py-3 text-center font-semibold text-white hover:bg-red-dark"
+            >
+              Book Now
+            </Link>
+            <a
+              href={shop.social.whatsappChannel}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={close}
+              className="rounded-full bg-[#25D366] px-6 py-3 text-center font-semibold text-white hover:opacity-90"
+            >
+              Join Our WhatsApp Channel
+            </a>
+          </div>
         </div>
       </div>
     </div>

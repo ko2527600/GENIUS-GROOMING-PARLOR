@@ -1,3 +1,4 @@
+import { useState } from "react";
 import LazyVideo from "./LazyVideo";
 import gallery1 from "../assets/gallery/gallery-1.jpg";
 import gallery2 from "../assets/gallery/gallery-2.jpg";
@@ -102,85 +103,95 @@ import nails10Mp4 from "../assets/video/nails-10.mp4";
 import nails10Poster from "../assets/video/nails-10-poster.jpg";
 
 const photos = [
-  gallery1,
-  gallery2,
-  gallery3,
-  gallery4,
-  gallery5,
-  gallery6,
-  gallery7,
-  gallery8,
-  gallery9,
-  gallery10,
-  gallery11,
-  gallery12,
-  gallery13,
-  gallery14,
-  gallery15,
-  gallery16,
-  gallery17,
-  gallery18,
-  gallery19,
-  gallery20,
-  gallery21,
-  gallery22,
-  gallery23,
-  gallery24,
-  gallery25,
-  gallery26,
-  gallery27,
-  gallery28,
-  gallery29,
-  gallery30,
-  gallery31,
-  gallery32,
-  gallery33,
-  gallery34,
-  gallery35,
-  gallery36,
-  gallery37,
-  gallery38,
-  gallery39,
-  gallery40,
-  gallery41,
-  gallery42,
-  gallery43,
-  gallery44,
-  gallery45,
-  gallery46,
-  gallery47,
+  { src: gallery1, category: "Hair" },
+  { src: gallery2, category: "Hair" },
+  { src: gallery3, category: "Hair" },
+  { src: gallery4, category: "Hair" },
+  { src: gallery5, category: "Hair" },
+  { src: gallery6, category: "Hair" },
+  { src: gallery7, category: "Hair" },
+  { src: gallery8, category: "Hair" },
+  { src: gallery9, category: "Hair" },
+  { src: gallery10, category: "Hair" },
+  { src: gallery11, category: "Hair" },
+  { src: gallery12, category: "Hair" },
+  { src: gallery13, category: "Hair" },
+  { src: gallery14, category: "Hair" },
+  { src: gallery15, category: "Hair" },
+  { src: gallery16, category: "Hair" },
+  { src: gallery17, category: "Hair" },
+  { src: gallery18, category: "Hair" },
+  { src: gallery19, category: "Hair" },
+  { src: gallery20, category: "Hair" },
+  { src: gallery21, category: "Hair" },
+  { src: gallery22, category: "Hair" },
+  { src: gallery23, category: "Hair" },
+  { src: gallery24, category: "Hair" },
+  { src: gallery25, category: "Hair" },
+  { src: gallery26, category: "Hair" },
+  { src: gallery27, category: "Hair" },
+  { src: gallery28, category: "Nails" },
+  { src: gallery29, category: "Nails" },
+  { src: gallery30, category: "Nails" },
+  { src: gallery31, category: "Nails" },
+  { src: gallery32, category: "Nails" },
+  { src: gallery33, category: "Nails" },
+  { src: gallery34, category: "Nails" },
+  { src: gallery35, category: "Nails" },
+  { src: gallery36, category: "Nails" },
+  { src: gallery37, category: "Nails" },
+  { src: gallery38, category: "Nails" },
+  { src: gallery39, category: "Nails" },
+  { src: gallery40, category: "Nails" },
+  { src: gallery41, category: "Nails" },
+  { src: gallery42, category: "Nails" },
+  { src: gallery43, category: "Nails" },
+  { src: gallery44, category: "Nails" },
+  { src: gallery45, category: "Nails" },
+  { src: gallery46, category: "Nails" },
+  { src: gallery47, category: "Nails" },
 ];
 
 const videos = [
-  { webm: process1Webm, mp4: process1Mp4, poster: process1Poster },
-  { webm: process2Webm, mp4: process2Mp4, poster: process2Poster },
-  { mp4: braiding1Mp4, poster: braiding1Poster },
-  { mp4: braiding2Mp4, poster: braiding2Poster },
-  { mp4: braiding3Mp4, poster: braiding3Poster },
-  { mp4: braiding4Mp4, poster: braiding4Poster },
-  { mp4: braiding5Mp4, poster: braiding5Poster },
-  { mp4: braiding6Mp4, poster: braiding6Poster },
-  { mp4: braiding7Mp4, poster: braiding7Poster },
-  { mp4: braiding8Mp4, poster: braiding8Poster },
-  { mp4: braiding9Mp4, poster: braiding9Poster },
-  { mp4: braiding10Mp4, poster: braiding10Poster },
-  { mp4: braiding11Mp4, poster: braiding11Poster },
-  { mp4: braiding12Mp4, poster: braiding12Poster },
-  { mp4: haircut1Mp4, poster: haircut1Poster },
-  { mp4: haircut2Mp4, poster: haircut2Poster },
-  { mp4: nails1Mp4, poster: nails1Poster },
-  { mp4: nails2Mp4, poster: nails2Poster },
-  { mp4: nails3Mp4, poster: nails3Poster },
-  { mp4: nails4Mp4, poster: nails4Poster },
-  { mp4: nails5Mp4, poster: nails5Poster },
-  { mp4: nails6Mp4, poster: nails6Poster },
-  { mp4: nails7Mp4, poster: nails7Poster },
-  { mp4: nails8Mp4, poster: nails8Poster },
-  { mp4: nails9Mp4, poster: nails9Poster },
-  { mp4: nails10Mp4, poster: nails10Poster },
+  { webm: process1Webm, mp4: process1Mp4, poster: process1Poster, category: "Hair" },
+  { webm: process2Webm, mp4: process2Mp4, poster: process2Poster, category: "Hair" },
+  { mp4: braiding1Mp4, poster: braiding1Poster, category: "Hair" },
+  { mp4: braiding2Mp4, poster: braiding2Poster, category: "Hair" },
+  { mp4: braiding3Mp4, poster: braiding3Poster, category: "Hair" },
+  { mp4: braiding4Mp4, poster: braiding4Poster, category: "Hair" },
+  { mp4: braiding5Mp4, poster: braiding5Poster, category: "Hair" },
+  { mp4: braiding6Mp4, poster: braiding6Poster, category: "Hair" },
+  { mp4: braiding7Mp4, poster: braiding7Poster, category: "Hair" },
+  { mp4: braiding8Mp4, poster: braiding8Poster, category: "Hair" },
+  { mp4: braiding9Mp4, poster: braiding9Poster, category: "Hair" },
+  { mp4: braiding10Mp4, poster: braiding10Poster, category: "Hair" },
+  { mp4: braiding11Mp4, poster: braiding11Poster, category: "Hair" },
+  { mp4: braiding12Mp4, poster: braiding12Poster, category: "Hair" },
+  { mp4: haircut1Mp4, poster: haircut1Poster, category: "Hair" },
+  { mp4: haircut2Mp4, poster: haircut2Poster, category: "Hair" },
+  { mp4: nails1Mp4, poster: nails1Poster, category: "Nails" },
+  { mp4: nails2Mp4, poster: nails2Poster, category: "Nails" },
+  { mp4: nails3Mp4, poster: nails3Poster, category: "Nails" },
+  { mp4: nails4Mp4, poster: nails4Poster, category: "Nails" },
+  { mp4: nails5Mp4, poster: nails5Poster, category: "Nails" },
+  { mp4: nails6Mp4, poster: nails6Poster, category: "Nails" },
+  { mp4: nails7Mp4, poster: nails7Poster, category: "Nails" },
+  { mp4: nails8Mp4, poster: nails8Poster, category: "Nails" },
+  { mp4: nails9Mp4, poster: nails9Poster, category: "Nails" },
+  { mp4: nails10Mp4, poster: nails10Poster, category: "Nails" },
 ];
 
+const TABS = ["All", "Hair", "Nails", "Beauty"];
+
 export default function Gallery() {
+  const [activeTab, setActiveTab] = useState("All");
+
+  const filteredVideos =
+    activeTab === "All" ? videos : videos.filter((v) => v.category === activeTab);
+  const filteredPhotos =
+    activeTab === "All" ? photos : photos.filter((p) => p.category === activeTab);
+  const isEmpty = filteredVideos.length === 0 && filteredPhotos.length === 0;
+
   return (
     <section className="bg-gray-50 px-4 py-16">
       <div className="mx-auto max-w-5xl">
@@ -189,26 +200,48 @@ export default function Gallery() {
           A look at some recent cuts and colors.
         </p>
 
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {videos.map((v, i) => (
-            <LazyVideo
-              key={`v${i}`}
-              webm={v.webm}
-              mp4={v.mp4}
-              poster={v.poster}
-              className="aspect-square w-full overflow-hidden rounded-xl shadow-sm"
-            />
-          ))}
-          {photos.map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              alt="Genius Grooming Parlor haircut"
-              loading="lazy"
-              className="aspect-square w-full rounded-xl object-cover shadow-sm"
-            />
+        <div className="mt-8 flex flex-wrap justify-center gap-2">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
+                activeTab === tab
+                  ? "bg-red text-white"
+                  : "bg-white text-gray-600 shadow-sm hover:bg-gray-100"
+              }`}
+            >
+              {tab}
+            </button>
           ))}
         </div>
+
+        {isEmpty ? (
+          <p className="mt-10 text-center text-gray-500">
+            Photos coming soon for this category.
+          </p>
+        ) : (
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+            {filteredVideos.map((v, i) => (
+              <LazyVideo
+                key={`${activeTab}-v${i}`}
+                webm={v.webm}
+                mp4={v.mp4}
+                poster={v.poster}
+                className="aspect-square w-full overflow-hidden rounded-xl shadow-sm"
+              />
+            ))}
+            {filteredPhotos.map((p, i) => (
+              <img
+                key={`${activeTab}-p${i}`}
+                src={p.src}
+                alt="Genius Grooming Parlor haircut"
+                loading="lazy"
+                className="aspect-square w-full rounded-xl object-cover shadow-sm"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
