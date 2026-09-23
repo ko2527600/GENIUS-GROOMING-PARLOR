@@ -32,6 +32,12 @@ import braiding2Mp4 from "../assets/video/braiding-2.mp4";
 import braiding2Poster from "../assets/video/braiding-2-poster.jpg";
 import braiding3Mp4 from "../assets/video/braiding-3.mp4";
 import braiding3Poster from "../assets/video/braiding-3-poster.jpg";
+import braiding4Mp4 from "../assets/video/braiding-4.mp4";
+import braiding4Poster from "../assets/video/braiding-4-poster.jpg";
+import braiding5Mp4 from "../assets/video/braiding-5.mp4";
+import braiding5Poster from "../assets/video/braiding-5-poster.jpg";
+import braiding6Mp4 from "../assets/video/braiding-6.mp4";
+import braiding6Poster from "../assets/video/braiding-6-poster.jpg";
 
 const photos = [
   gallery1,
@@ -63,6 +69,9 @@ const videos = [
   { mp4: braiding1Mp4, poster: braiding1Poster },
   { mp4: braiding2Mp4, poster: braiding2Poster },
   { mp4: braiding3Mp4, poster: braiding3Poster },
+  { mp4: braiding4Mp4, poster: braiding4Poster },
+  { mp4: braiding5Mp4, poster: braiding5Poster },
+  { mp4: braiding6Mp4, poster: braiding6Poster },
 ];
 
 export default function Gallery() {
