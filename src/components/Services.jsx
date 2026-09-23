@@ -47,6 +47,16 @@ import nailsGallery7 from "../assets/gallery/gallery-34.jpg";
 import nailsGallery8 from "../assets/gallery/gallery-35.jpg";
 import nailsGallery9 from "../assets/gallery/gallery-36.jpg";
 import nailsGallery10 from "../assets/gallery/gallery-37.jpg";
+import nailsGallery11 from "../assets/gallery/gallery-38.jpg";
+import nailsGallery12 from "../assets/gallery/gallery-39.jpg";
+import nailsGallery13 from "../assets/gallery/gallery-40.jpg";
+import nailsGallery14 from "../assets/gallery/gallery-41.jpg";
+import nailsGallery15 from "../assets/gallery/gallery-42.jpg";
+import nailsGallery16 from "../assets/gallery/gallery-43.jpg";
+import nailsGallery17 from "../assets/gallery/gallery-44.jpg";
+import nailsGallery18 from "../assets/gallery/gallery-45.jpg";
+import nailsGallery19 from "../assets/gallery/gallery-46.jpg";
+import nailsGallery20 from "../assets/gallery/gallery-47.jpg";
 import nails1Mp4 from "../assets/video/nails-1.mp4";
 import nails1Poster from "../assets/video/nails-1-poster.jpg";
 import nails2Mp4 from "../assets/video/nails-2.mp4";
@@ -120,6 +130,16 @@ const serviceMedia = {
     { type: "photo", src: nailsGallery8 },
     { type: "photo", src: nailsGallery9 },
     { type: "photo", src: nailsGallery10 },
+    { type: "photo", src: nailsGallery11 },
+    { type: "photo", src: nailsGallery12 },
+    { type: "photo", src: nailsGallery13 },
+    { type: "photo", src: nailsGallery14 },
+    { type: "photo", src: nailsGallery15 },
+    { type: "photo", src: nailsGallery16 },
+    { type: "photo", src: nailsGallery17 },
+    { type: "photo", src: nailsGallery18 },
+    { type: "photo", src: nailsGallery19 },
+    { type: "photo", src: nailsGallery20 },
   ],
 };
 

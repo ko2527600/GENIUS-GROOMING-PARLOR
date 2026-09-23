@@ -36,6 +36,16 @@ import gallery34 from "../assets/gallery/gallery-34.jpg";
 import gallery35 from "../assets/gallery/gallery-35.jpg";
 import gallery36 from "../assets/gallery/gallery-36.jpg";
 import gallery37 from "../assets/gallery/gallery-37.jpg";
+import gallery38 from "../assets/gallery/gallery-38.jpg";
+import gallery39 from "../assets/gallery/gallery-39.jpg";
+import gallery40 from "../assets/gallery/gallery-40.jpg";
+import gallery41 from "../assets/gallery/gallery-41.jpg";
+import gallery42 from "../assets/gallery/gallery-42.jpg";
+import gallery43 from "../assets/gallery/gallery-43.jpg";
+import gallery44 from "../assets/gallery/gallery-44.jpg";
+import gallery45 from "../assets/gallery/gallery-45.jpg";
+import gallery46 from "../assets/gallery/gallery-46.jpg";
+import gallery47 from "../assets/gallery/gallery-47.jpg";
 import process1Webm from "../assets/video/process-1.webm";
 import process1Mp4 from "../assets/video/process-1.mp4";
 import process1Poster from "../assets/video/process-1-poster.jpg";
@@ -129,6 +139,16 @@ const photos = [
   gallery35,
   gallery36,
   gallery37,
+  gallery38,
+  gallery39,
+  gallery40,
+  gallery41,
+  gallery42,
+  gallery43,
+  gallery44,
+  gallery45,
+  gallery46,
+  gallery47,
 ];
 
 const videos = [
