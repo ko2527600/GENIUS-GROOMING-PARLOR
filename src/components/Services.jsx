@@ -79,6 +79,7 @@ import nails10Mp4 from "../assets/video/nails-10.mp4";
 import nails10Poster from "../assets/video/nails-10-poster.jpg";
 
 const serviceGroups = groupServicesByCategory(services);
+const TABS = ["All", ...serviceGroups.map((g) => g.category)];
 
 // Photos/videos for each service, by id (see shopData.js). Add more
 // here as photos/videos come in for other services — anything left
@@ -178,6 +179,12 @@ function ServiceMedia({ items }) {
 
 export default function Services() {
   const [openId, setOpenId] = useState(null);
+  const [activeTab, setActiveTab] = useState("All");
+
+  const visibleGroups =
+    activeTab === "All"
+      ? serviceGroups
+      : serviceGroups.filter((g) => g.category === activeTab);
 
   return (
     <section id="services" className="scroll-mt-16 bg-white px-4 py-16">
@@ -187,8 +194,24 @@ export default function Services() {
           Day and night services available. Tap a service to see photos and videos.
         </p>
 
-        <div className="mt-10 space-y-8">
-          {serviceGroups.map((group) => (
+        <div className="mt-8 flex flex-wrap justify-center gap-2">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
+                activeTab === tab
+                  ? "bg-red text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 space-y-8">
+          {visibleGroups.map((group) => (
             <div key={group.category}>
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-dark">
                 {group.category}
