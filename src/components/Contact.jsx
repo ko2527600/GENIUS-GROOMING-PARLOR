@@ -59,6 +59,18 @@ export default function Contact() {
           </div>
         </div>
 
+        <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 shadow-lg">
+          <iframe
+            title={`${shop.name} location map`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(shop.address)}&output=embed`}
+            width="100%"
+            height="300"
+            style={{ border: 0 }}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:items-start">
           <a
             href={`tel:${shop.phone}`}
