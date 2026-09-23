@@ -15,6 +15,7 @@ export const shop = {
     tiktok: "https://www.tiktok.com/@geniusgroomingparlour",
     instagram: "#",
     facebook: "#",
+    whatsappChannel: "https://whatsapp.com/channel/0029Vb8k9idKmCPYiaVjlp10",
   },
 };
 
