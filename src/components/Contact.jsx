@@ -96,6 +96,17 @@ export default function Contact() {
           </div>
         </div>
 
+        <div className="mt-6 flex justify-center">
+          <a
+            href={shop.social.whatsappChannel}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full max-w-xs rounded-full bg-[#25D366] px-8 py-3 text-center font-semibold text-white hover:opacity-90 sm:w-auto"
+          >
+            Join Our WhatsApp Channel
+          </a>
+        </div>
+
         <p className="mt-8 text-center text-sm text-gray-300">
           Follow us on TikTok{" "}
           <a
