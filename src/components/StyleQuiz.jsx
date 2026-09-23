@@ -25,6 +25,21 @@ export default function StyleQuiz() {
     setService(null);
   }
 
+  function selectService(s) {
+    setService(s);
+    fetch("/api/quiz-answers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category,
+        serviceId: s.id,
+        serviceName: s.name,
+      }),
+    }).catch(() => {
+      // Best effort — a failed save shouldn't block the visitor's result.
+    });
+  }
+
   const step = service ? "result" : category ? "service" : "category";
   const servicesInCategory =
     serviceGroups.find((g) => g.category === category)?.items ?? [];
@@ -66,7 +81,7 @@ export default function StyleQuiz() {
                 {servicesInCategory.map((s) => (
                   <button
                     key={s.id}
-                    onClick={() => setService(s)}
+                    onClick={() => selectService(s)}
                     className="rounded-full bg-gray-100 px-5 py-3 text-sm font-semibold text-ink hover:bg-gray-200"
                   >
                     {s.name}
