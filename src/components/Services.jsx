@@ -15,6 +15,10 @@ import braiding5Mp4 from "../assets/video/braiding-5.mp4";
 import braiding5Poster from "../assets/video/braiding-5-poster.jpg";
 import braiding6Mp4 from "../assets/video/braiding-6.mp4";
 import braiding6Poster from "../assets/video/braiding-6-poster.jpg";
+import haircut1Mp4 from "../assets/video/haircut-1.mp4";
+import haircut1Poster from "../assets/video/haircut-1-poster.jpg";
+import haircut2Mp4 from "../assets/video/haircut-2.mp4";
+import haircut2Poster from "../assets/video/haircut-2-poster.jpg";
 
 const serviceGroups = groupServicesByCategory(services);
 
@@ -22,6 +26,10 @@ const serviceGroups = groupServicesByCategory(services);
 // here as photos/videos come in for other services — anything left
 // out just shows a "coming soon" placeholder when expanded.
 const serviceMedia = {
+  haircut: [
+    { type: "video", mp4: haircut1Mp4, poster: haircut1Poster },
+    { type: "video", mp4: haircut2Mp4, poster: haircut2Poster },
+  ],
   braiding: [
     { type: "video", mp4: braiding1Mp4, poster: braiding1Poster },
     { type: "video", mp4: braiding2Mp4, poster: braiding2Poster },

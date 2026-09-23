@@ -38,6 +38,10 @@ import braiding5Mp4 from "../assets/video/braiding-5.mp4";
 import braiding5Poster from "../assets/video/braiding-5-poster.jpg";
 import braiding6Mp4 from "../assets/video/braiding-6.mp4";
 import braiding6Poster from "../assets/video/braiding-6-poster.jpg";
+import haircut1Mp4 from "../assets/video/haircut-1.mp4";
+import haircut1Poster from "../assets/video/haircut-1-poster.jpg";
+import haircut2Mp4 from "../assets/video/haircut-2.mp4";
+import haircut2Poster from "../assets/video/haircut-2-poster.jpg";
 
 const photos = [
   gallery1,
@@ -72,6 +76,8 @@ const videos = [
   { mp4: braiding4Mp4, poster: braiding4Poster },
   { mp4: braiding5Mp4, poster: braiding5Poster },
   { mp4: braiding6Mp4, poster: braiding6Poster },
+  { mp4: haircut1Mp4, poster: haircut1Poster },
+  { mp4: haircut2Mp4, poster: haircut2Poster },
 ];
 
 export default function Gallery() {
