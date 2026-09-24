@@ -7,6 +7,7 @@ import {
   payment,
   groupServicesByCategory,
 } from "../data/shopData";
+import PostBookingQuizPopup from "./PostBookingQuizPopup";
 
 const serviceGroups = groupServicesByCategory(services);
 
@@ -51,6 +52,7 @@ export default function Booking() {
   const [paymentRef, setPaymentRef] = useState("");
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [done, setDone] = useState(false);
+  const [showQuizPopup, setShowQuizPopup] = useState(false);
 
   function toggleService(s) {
     setSelectedServices((prev) =>
@@ -62,6 +64,7 @@ export default function Booking() {
 
   function resetForm() {
     setDone(false);
+    setShowQuizPopup(false);
     setStep(0);
     setBarber(null);
     setSelectedServices([]);
@@ -142,12 +145,14 @@ export default function Booking() {
               href={whatsappLink(message)}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => setShowQuizPopup(true)}
               className="rounded-full bg-[#25D366] py-3 font-semibold text-white hover:opacity-90"
             >
               Send via WhatsApp
             </a>
             <a
               href={smsLink(message)}
+              onClick={() => setShowQuizPopup(true)}
               className="rounded-full border border-gray-300 py-3 font-semibold text-ink hover:bg-gray-100"
             >
               Send via SMS
@@ -161,6 +166,10 @@ export default function Booking() {
             Book Another
           </button>
         </div>
+
+        {showQuizPopup && (
+          <PostBookingQuizPopup onClose={() => setShowQuizPopup(false)} />
+        )}
       </section>
     );
   }
