@@ -181,17 +181,29 @@ const videos = [
 ];
 
 const TABS = ["All", "Hair", "Nails", "Beauty"];
+const PREVIEW_LIMIT = 8;
 
 export default function Gallery() {
   const [activeTab, setActiveTab] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [showAll, setShowAll] = useState(false);
+
+  function selectTab(tab) {
+    setActiveTab(tab);
+    setShowAll(false);
+  }
 
   const filteredVideos =
     activeTab === "All" ? videos : videos.filter((v) => v.category === activeTab);
   const filteredPhotos =
     activeTab === "All" ? photos : photos.filter((p) => p.category === activeTab);
   const isEmpty = filteredVideos.length === 0 && filteredPhotos.length === 0;
+  const totalCount = filteredVideos.length + filteredPhotos.length;
   const lightboxImages = filteredPhotos.map((p) => p.src);
+
+  const visibleVideos = showAll ? filteredVideos : filteredVideos.slice(0, PREVIEW_LIMIT);
+  const remainingBudget = Math.max(0, PREVIEW_LIMIT - visibleVideos.length);
+  const visiblePhotos = showAll ? filteredPhotos : filteredPhotos.slice(0, remainingBudget);
 
   function navigateLightbox(delta) {
     setLightboxIndex(
@@ -211,7 +223,7 @@ export default function Gallery() {
           {TABS.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => selectTab(tab)}
               className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
                 activeTab === tab
                   ? "bg-red text-white"
@@ -229,7 +241,7 @@ export default function Gallery() {
           </p>
         ) : (
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-            {filteredVideos.map((v, i) => (
+            {visibleVideos.map((v, i) => (
               <LazyVideo
                 key={`${activeTab}-v${i}`}
                 webm={v.webm}
@@ -238,7 +250,7 @@ export default function Gallery() {
                 className="aspect-square w-full overflow-hidden rounded-xl shadow-sm"
               />
             ))}
-            {filteredPhotos.map((p, i) => (
+            {visiblePhotos.map((p, i) => (
               <button
                 key={`${activeTab}-p${i}`}
                 onClick={() => setLightboxIndex(i)}
@@ -253,6 +265,17 @@ export default function Gallery() {
                 />
               </button>
             ))}
+          </div>
+        )}
+
+        {!showAll && totalCount > PREVIEW_LIMIT && (
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => setShowAll(true)}
+              className="rounded-full border border-gray-300 bg-white px-8 py-3 font-semibold text-ink hover:border-ink"
+            >
+              See All ({totalCount})
+            </button>
           </div>
         )}
       </div>
