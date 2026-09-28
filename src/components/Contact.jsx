@@ -3,6 +3,7 @@ import BackgroundSlideshow from "./BackgroundSlideshow";
 import gallery2 from "../assets/gallery/gallery-2.jpg";
 import gallery3 from "../assets/gallery/gallery-3.jpg";
 import gallery4 from "../assets/gallery/gallery-4.jpg";
+import whatsappChannelQr from "../assets/whatsapp-channel-qr.png";
 
 const bgImages = [gallery2, gallery3, gallery4];
 
@@ -102,6 +103,24 @@ export default function Contact() {
             className="w-full max-w-xs rounded-full bg-[#25D366] px-8 py-3 text-center font-semibold text-white hover:opacity-90 sm:w-auto"
           >
             Join Our WhatsApp Channel
+          </a>
+        </div>
+
+        <div className="mt-8 flex justify-center">
+          <a
+            href={shop.social.whatsappChannel}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-3 rounded-2xl border border-brand/30 bg-black/40 p-5 shadow-lg transition hover:border-brand/60"
+          >
+            <img
+              src={whatsappChannelQr}
+              alt="QR code to join the Genius Grooming Parlour WhatsApp channel"
+              className="h-56 w-auto rounded-xl sm:h-64"
+            />
+            <span className="text-sm font-semibold text-brand">
+              Scan to join our WhatsApp Channel
+            </span>
           </a>
         </div>
 
