@@ -6,7 +6,6 @@ import Lightbox from "./Lightbox";
 import braidingGallery from "../assets/gallery/gallery-21.jpg";
 import braidingGallery2 from "../assets/gallery/gallery-22.jpg";
 import braidingGallery3 from "../assets/gallery/gallery-23.jpg";
-import braidingGallery4 from "../assets/gallery/gallery-24.jpg";
 import braidingGallery5 from "../assets/gallery/gallery-25.jpg";
 import braidingGallery6 from "../assets/gallery/gallery-26.jpg";
 import braidingGallery7 from "../assets/gallery/gallery-27.jpg";
@@ -106,7 +105,6 @@ const serviceMedia = {
     { type: "photo", src: braidingGallery },
     { type: "photo", src: braidingGallery2 },
     { type: "photo", src: braidingGallery3 },
-    { type: "photo", src: braidingGallery4 },
     { type: "photo", src: braidingGallery5 },
     { type: "photo", src: braidingGallery6 },
     { type: "photo", src: braidingGallery7 },
