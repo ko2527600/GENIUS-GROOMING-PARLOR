@@ -1,17 +1,48 @@
-import { createBooking, listBookings } from "./_lib/bookings.js";
+import { createBooking, listBookings, checkAvailability } from "./_lib/bookings.js";
 import { isAuthenticated } from "./_lib/session.js";
 import { notifyCustomer } from "./_lib/notify.js";
+import { validateBookingData } from "./_lib/validation.js";
+import { rateLimitMiddleware } from "./_lib/rateLimit.js";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { name, phone, stylist, services, time } = req.body ?? {};
-
-    if (!name || !phone || !services || !time) {
-      return res.status(400).json({ ok: false, error: "Missing required fields" });
+    // Rate limit: 5 booking attempts per 15 minutes per IP
+    const rateLimit = rateLimitMiddleware(req, res, 5, 15 * 60 * 1000);
+    if (rateLimit.rateLimited) {
+      return res.status(429).json(rateLimit.response);
     }
 
+    const bookingData = req.body ?? {};
+
+    // Validate and sanitize input
+    const validation = validateBookingData(bookingData);
+    if (!validation.isValid) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Validation failed", 
+        errors: validation.errors 
+      });
+    }
+
+    const { name, phone, stylist, services, time, date, payment, inspirationPhoto } = validation.sanitized;
+
+    // Check availability before creating booking
     try {
-      const booking = await createBooking({ name, phone, stylist, services, time });
+      const available = await checkAvailability(date, time, stylist);
+      if (!available) {
+        return res.status(409).json({ ok: false, error: "Time slot no longer available" });
+      }
+
+      const booking = await createBooking({ 
+        name, 
+        phone, 
+        stylist, 
+        services, 
+        time, 
+        date,
+        payment,
+        inspirationPhoto 
+      });
       await notifyCustomer("received", booking);
       return res.status(201).json({ ok: true, booking });
     } catch (err) {

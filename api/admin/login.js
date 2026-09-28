@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { createSessionToken, setSessionCookie } from "../_lib/session.js";
+import { rateLimitMiddleware } from "../_lib/rateLimit.js";
 
 function safeEqual(a, b) {
   const aBuf = Buffer.from(a);
@@ -16,6 +17,12 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ ok: false, error: "Method not allowed" });
+  }
+
+  // Rate limit: 5 login attempts per 15 minutes per IP
+  const rateLimit = rateLimitMiddleware(req, res, 5, 15 * 60 * 1000);
+  if (rateLimit.rateLimited) {
+    return res.status(429).json(rateLimit.response);
   }
 
   const { password } = req.body ?? {};

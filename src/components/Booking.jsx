@@ -11,7 +11,7 @@ import PostBookingQuizPopup from "./PostBookingQuizPopup";
 
 const serviceGroups = groupServicesByCategory(services);
 
-const STEPS = ["Stylist", "Service", "Time", "Payment", "Confirm"];
+const STEPS = ["Stylist", "Service", "Date & Time", "Payment", "Confirm"];
 
 function serviceSummary(selectedServices, otherService) {
   const names = selectedServices.map((s) => s.name);
@@ -47,12 +47,17 @@ export default function Booking() {
   const [barber, setBarber] = useState(null);
   const [selectedServices, setSelectedServices] = useState([]);
   const [otherService, setOtherService] = useState("");
+  const [date, setDate] = useState("");
   const [time, setTime] = useState(null);
+  const [availableSlots, setAvailableSlots] = useState(timeSlots);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [paid, setPaid] = useState(false);
   const [paymentRef, setPaymentRef] = useState("");
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [done, setDone] = useState(false);
   const [showQuizPopup, setShowQuizPopup] = useState(false);
+  const [inspirationPhoto, setInspirationPhoto] = useState(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   function toggleService(s) {
     setSelectedServices((prev) =>
@@ -62,6 +67,88 @@ export default function Booking() {
     );
   }
 
+  // Fetch available slots when date or barber changes
+  async function fetchAvailableSlots(selectedDate, selectedBarber) {
+    if (!selectedDate || !selectedBarber) return;
+    
+    setLoadingSlots(true);
+    try {
+      const res = await fetch(
+        `/api/availability?date=${selectedDate}&stylist=${encodeURIComponent(selectedBarber)}`
+      );
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setAvailableSlots(data.slots);
+      }
+    } catch (err) {
+      console.error("Failed to fetch available slots:", err);
+      setAvailableSlots(timeSlots); // Fallback to all slots
+    } finally {
+      setLoadingSlots(false);
+    }
+  }
+
+  // Handle date selection
+  function handleDateChange(selectedDate) {
+    setDate(selectedDate);
+    setTime(null); // Reset time when date changes
+    fetchAvailableSlots(selectedDate, barber?.name);
+  }
+
+  // Handle photo upload
+  async function handlePhotoUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be less than 5MB');
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      // Convert file to base64 for simpler upload
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const res = await fetch('/api/upload-inspiration', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              file: event.target.result,
+              filename: file.name,
+              contentType: file.type,
+            }),
+          });
+
+          const data = await res.json();
+          if (res.ok && data.ok) {
+            setInspirationPhoto(data.url);
+          } else {
+            alert('Failed to upload photo');
+          }
+        } catch (err) {
+          console.error('Upload error:', err);
+          alert('Failed to upload photo');
+        } finally {
+          setUploadingPhoto(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Failed to upload photo');
+      setUploadingPhoto(false);
+    }
+  }
+
   function resetForm() {
     setDone(false);
     setShowQuizPopup(false);
@@ -69,16 +156,19 @@ export default function Booking() {
     setBarber(null);
     setSelectedServices([]);
     setOtherService("");
+    setDate("");
     setTime(null);
+    setAvailableSlots(timeSlots);
     setPaid(false);
     setPaymentRef("");
     setCustomer({ name: "", phone: "" });
+    setInspirationPhoto(null);
   }
 
   const canNext =
     (step === 0 && barber) ||
     (step === 1 && (selectedServices.length > 0 || otherService.trim())) ||
-    (step === 2 && time) ||
+    (step === 2 && date && time) ||
     (step === 3 && paid && paymentRef.trim()) ||
     step === 4;
 
@@ -105,7 +195,9 @@ export default function Booking() {
         stylist: barber?.name,
         services: serviceSummary(selectedServices, otherService),
         time,
+        date,
         payment: `${payment.currency}${payment.amount} sent to ${payment.momoNumber} (ref: ${paymentRef})`,
+        inspirationPhoto,
       }),
     }).catch(() => {});
   }
@@ -271,20 +363,91 @@ export default function Booking() {
         )}
 
         {step === 2 && (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {timeSlots.map((t) => (
-              <button
-                key={t}
-                onClick={() => setTime(t)}
-                className={`rounded-xl border p-3 text-center font-medium transition ${
-                  time === t
-                    ? "border-brand bg-brand/10"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
+          <div className="space-y-6">
+            <div>
+              <label className="mb-2 block text-sm font-medium">Select Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => handleDateChange(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+              />
+            </div>
+
+            {date && (
+              <div>
+                <label className="mb-2 block text-sm font-medium">
+                  Select Time
+                  {loadingSlots && <span className="ml-2 text-xs text-gray-500">(checking availability...)</span>}
+                </label>
+                {availableSlots.length === 0 ? (
+                  <p className="rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-center text-sm text-yellow-800">
+                    All slots are booked for this date. Please choose another date.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {timeSlots.map((t) => {
+                      const isAvailable = availableSlots.includes(t);
+                      return (
+                        <button
+                          key={t}
+                          onClick={() => isAvailable && setTime(t)}
+                          disabled={!isAvailable}
+                          className={`rounded-xl border p-3 text-center font-medium transition ${
+                            time === t
+                              ? "border-brand bg-brand/10"
+                              : isAvailable
+                                ? "border-gray-200 hover:border-gray-300"
+                                : "border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed line-through"
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Inspiration Photo (Optional)
+              </label>
+              <p className="mb-2 text-xs text-gray-500">
+                Upload a photo of the style you want - helps your stylist prepare!
+              </p>
+              {inspirationPhoto ? (
+                <div className="relative inline-block">
+                  <img
+                    src={inspirationPhoto}
+                    alt="Inspiration"
+                    className="h-32 w-32 rounded-lg object-cover"
+                  />
+                  <button
+                    onClick={() => setInspirationPhoto(null)}
+                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red text-xs text-white"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition hover:border-brand">
+                  <span className="text-4xl">📷</span>
+                  <span className="mt-2 text-sm font-medium text-gray-600">
+                    {uploadingPhoto ? "Uploading..." : "Click to upload photo"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    disabled={uploadingPhoto}
+                    className="hidden"
+                  />
+                </label>
+              )}
+            </div>
           </div>
         )}
 
@@ -366,6 +529,15 @@ export default function Booking() {
                 {serviceSummary(selectedServices, otherService)}
               </p>
               <p>
+                <span className="font-semibold">Date:</span>{" "}
+                {new Date(date).toLocaleDateString("en-GB", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+              <p>
                 <span className="font-semibold">Time:</span> {time}
               </p>
               <p>
@@ -376,6 +548,16 @@ export default function Booking() {
               <p>
                 <span className="font-semibold">Reference:</span> {paymentRef}
               </p>
+              {inspirationPhoto && (
+                <div className="mt-3">
+                  <span className="font-semibold">Inspiration Photo:</span>
+                  <img
+                    src={inspirationPhoto}
+                    alt="Inspiration"
+                    className="mt-2 h-24 w-24 rounded-lg object-cover"
+                  />
+                </div>
+              )}
             </div>
 
             <div>
@@ -400,9 +582,14 @@ export default function Booking() {
                 onChange={(e) =>
                   setCustomer({ ...customer, phone: e.target.value })
                 }
+                pattern="^(0[2-5]\d{8}|\+?233[2-5]\d{8})$"
+                title="Please enter a valid Ghana phone number (e.g., 024 123 4567)"
                 className="mt-1 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
                 placeholder="024 000 0000"
               />
+              <p className="mt-1 text-xs text-gray-500">
+                Ghana format: 024/054/055/059 + 7 digits
+              </p>
             </div>
 
             <button

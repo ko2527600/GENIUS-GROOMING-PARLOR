@@ -26,3 +26,10 @@ backend/data/*.json
 *.sw?
 .vercel
 .env*
+
+# Unoptimized media files (to be converted)
+public/Haircuts/*.HEIC
+public/Haircuts/*.MOV
+public/Haircuts/*.MP4
+public/Hair Coloring/*.MOV
+public/gallery-optimized/

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { shop, payment } from "../data/shopData";
 import logo from "../assets/logo.png";
+import CalendarView from "../components/CalendarView";
 
 const STATUS_OPTIONS = ["new", "confirmed", "completed", "cancelled"];
 
@@ -376,6 +377,139 @@ function InsightsView() {
   );
 }
 
+function AnalyticsView() {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/api/analytics");
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          setError(data.error || "Failed to load analytics");
+          return;
+        }
+        setStats(data.stats);
+      } catch {
+        setError("Network error - please try again");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (error) return <p className="mt-6 text-red">{error}</p>;
+  if (loading) return <p className="mt-8 text-center text-gray-500">Loading analytics...</p>;
+  if (!stats) return null;
+
+  const topServices = Object.entries(stats.servicePopularity)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const peakTimes = Object.entries(stats.peakTimes)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const stylistPerf = Object.entries(stats.stylistPerformance)
+    .sort((a, b) => b[1] - a[1]);
+
+  const maxService = topServices[0]?.[1] ?? 1;
+  const maxTime = peakTimes[0]?.[1] ?? 1;
+  const maxStylist = stylistPerf[0]?.[1] ?? 1;
+
+  return (
+    <div className="mt-6 space-y-8">
+      {/* Overview Stats */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <StatTile label="Total Bookings" value={stats.totalBookings} />
+        <StatTile label="Total Customers" value={stats.totalCustomers} />
+        <StatTile label="Repeat Customer Rate" value={`${stats.repeatCustomerRate}%`} accent="text-green-700" />
+        <StatTile label="Avg Bookings/Customer" value={(stats.totalBookings / stats.totalCustomers).toFixed(1)} />
+      </div>
+
+      {/* Popular Services */}
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-bold">Popular Services</h3>
+        {topServices.length === 0 ? (
+          <p className="text-center text-gray-500">No data yet</p>
+        ) : (
+          <div className="space-y-3">
+            {topServices.map(([service, count]) => (
+              <div key={service}>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold">{service}</span>
+                  <span className="text-gray-500">{count} bookings</span>
+                </div>
+                <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className="h-full rounded-full bg-brand"
+                    style={{ width: `${(count / maxService) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Peak Booking Times */}
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-bold">Peak Booking Times</h3>
+        {peakTimes.length === 0 ? (
+          <p className="text-center text-gray-500">No data yet</p>
+        ) : (
+          <div className="space-y-3">
+            {peakTimes.map(([time, count]) => (
+              <div key={time}>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold">{time}</span>
+                  <span className="text-gray-500">{count} bookings</span>
+                </div>
+                <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className="h-full rounded-full bg-blue-500"
+                    style={{ width: `${(count / maxTime) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Stylist Performance */}
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-bold">Stylist Performance (Completed Bookings)</h3>
+        {stylistPerf.length === 0 ? (
+          <p className="text-center text-gray-500">No completed bookings yet</p>
+        ) : (
+          <div className="space-y-3">
+            {stylistPerf.map(([stylist, count]) => (
+              <div key={stylist}>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold">{stylist}</span>
+                  <span className="text-gray-500">{count} completed</span>
+                </div>
+                <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className="h-full rounded-full bg-green-500"
+                    style={{ width: `${(count / maxStylist) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function StatTile({ label, value, accent }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
@@ -386,12 +520,13 @@ function StatTile({ label, value, accent }) {
 }
 
 function Dashboard({ onLoggedOut }) {
-  const [tab, setTab] = useState("bookings"); // bookings | customers | insights
+  const [tab, setTab] = useState("bookings"); // bookings | calendar | customers | insights | analytics
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   async function loadBookings() {
     setLoading(true);
@@ -503,9 +638,17 @@ function Dashboard({ onLoggedOut }) {
       <section className="mx-auto max-w-5xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-2xl font-bold">
-            {tab === "bookings" ? "Bookings" : tab === "customers" ? "Customers" : "Interest"}
+            {tab === "bookings" 
+              ? "Bookings" 
+              : tab === "calendar"
+                ? "Calendar"
+                : tab === "customers"
+                  ? "Customers"
+                  : tab === "insights"
+                    ? "Interest"
+                    : "Analytics"}
           </h1>
-          {tab === "bookings" && (
+          {(tab === "bookings" || tab === "calendar") && (
             <button
               onClick={loadBookings}
               className="text-sm font-semibold text-gray-500 underline underline-offset-4"
@@ -545,10 +688,12 @@ function Dashboard({ onLoggedOut }) {
           </>
         )}
 
-        <div className="mt-6 inline-flex rounded-full border border-gray-200 bg-white p-1 shadow-sm">
+        <div className="mt-6 inline-flex flex-wrap rounded-full border border-gray-200 bg-white p-1 shadow-sm">
           {[
             { id: "bookings", label: "Bookings" },
+            { id: "calendar", label: "Calendar" },
             { id: "customers", label: "Customers" },
+            { id: "analytics", label: "Analytics" },
             { id: "insights", label: "Interest" },
           ].map((t) => (
             <button
@@ -567,6 +712,13 @@ function Dashboard({ onLoggedOut }) {
           <CustomersView />
         ) : tab === "insights" ? (
           <InsightsView />
+        ) : tab === "analytics" ? (
+          <AnalyticsView />
+        ) : tab === "calendar" ? (
+          <CalendarView 
+            bookings={bookings} 
+            onBookingClick={(booking) => setSelectedBooking(booking)}
+          />
         ) : (
           <>
             <input
@@ -607,6 +759,116 @@ function Dashboard({ onLoggedOut }) {
               </div>
             )}
           </>
+        )}
+
+        {/* Booking Detail Modal */}
+        {selectedBooking && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            onClick={() => setSelectedBooking(null)}
+          >
+            <div 
+              className="max-w-lg w-full rounded-2xl bg-white p-6 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start justify-between">
+                <h2 className="text-xl font-bold">Booking Details</h2>
+                <button
+                  onClick={() => setSelectedBooking(null)}
+                  className="text-2xl text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="mt-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Avatar name={selectedBooking.name} />
+                    <div>
+                      <p className="font-semibold">{selectedBooking.name}</p>
+                      <a
+                        href={`tel:${selectedBooking.phone}`}
+                        className="text-sm text-gray-500 underline underline-offset-2"
+                      >
+                        {selectedBooking.phone}
+                      </a>
+                    </div>
+                  </div>
+                  <StatusBadge status={selectedBooking.status} />
+                </div>
+
+                <dl className="mt-4 space-y-2 border-t border-gray-100 pt-4 text-sm">
+                  <div className="flex gap-2">
+                    <dt className="w-28 shrink-0 font-medium text-gray-800">Service</dt>
+                    <dd className="text-gray-600">{selectedBooking.services}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="w-28 shrink-0 font-medium text-gray-800">Stylist</dt>
+                    <dd className="text-gray-600">{selectedBooking.stylist}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="w-28 shrink-0 font-medium text-gray-800">Date</dt>
+                    <dd className="text-gray-600">
+                      {selectedBooking.date
+                        ? new Date(selectedBooking.date).toLocaleDateString("en-GB", {
+                            weekday: "long",
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })
+                        : "Not specified"}
+                    </dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="w-28 shrink-0 font-medium text-gray-800">Time</dt>
+                    <dd className="text-gray-600">{selectedBooking.time}</dd>
+                  </div>
+                  {selectedBooking.payment && (
+                    <div className="flex gap-2">
+                      <dt className="w-28 shrink-0 font-medium text-gray-800">Fee</dt>
+                      <dd className="text-gray-600">{selectedBooking.payment}</dd>
+                    </div>
+                  )}
+                  {selectedBooking.inspirationPhoto && (
+                    <div className="flex gap-2">
+                      <dt className="w-28 shrink-0 font-medium text-gray-800">Inspiration</dt>
+                      <dd>
+                        <img
+                          src={selectedBooking.inspirationPhoto}
+                          alt="Inspiration"
+                          className="h-32 w-32 rounded-lg object-cover"
+                        />
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+
+                <div className="mt-6 flex flex-wrap gap-2 border-t border-gray-100 pt-4">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    Update Status
+                  </span>
+                  {STATUS_OPTIONS.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => {
+                        handleStatusChange(selectedBooking.id, s);
+                        setSelectedBooking({ ...selectedBooking, status: s });
+                      }}
+                      disabled={selectedBooking.status === s}
+                      className={`rounded-full border px-3 py-1 text-xs font-semibold capitalize transition disabled:cursor-default disabled:opacity-40 ${
+                        selectedBooking.status === s
+                          ? "border-ink bg-ink text-white"
+                          : "border-gray-300 text-gray-600 hover:border-ink"
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </section>
     </div>
