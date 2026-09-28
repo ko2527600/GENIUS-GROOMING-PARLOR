@@ -1,29 +1,19 @@
 import { useState } from "react";
 import LazyVideo from "./LazyVideo";
 import Lightbox from "./Lightbox";
-import gallery1 from "../assets/gallery/gallery-1.jpg";
 import gallery2 from "../assets/gallery/gallery-2.jpg";
 import gallery3 from "../assets/gallery/gallery-3.jpg";
 import gallery4 from "../assets/gallery/gallery-4.jpg";
-import gallery5 from "../assets/gallery/gallery-5.jpg";
-import gallery6 from "../assets/gallery/gallery-6.jpg";
-import gallery7 from "../assets/gallery/gallery-7.jpg";
-import gallery8 from "../assets/gallery/gallery-8.jpg";
 import gallery9 from "../assets/gallery/gallery-9.jpg";
-import gallery10 from "../assets/gallery/gallery-10.jpg";
-import gallery11 from "../assets/gallery/gallery-11.jpg";
 import gallery12 from "../assets/gallery/gallery-12.jpg";
 import gallery13 from "../assets/gallery/gallery-13.jpg";
-import gallery14 from "../assets/gallery/gallery-14.jpg";
 import gallery15 from "../assets/gallery/gallery-15.jpg";
 import gallery17 from "../assets/gallery/gallery-17.jpg";
 import gallery18 from "../assets/gallery/gallery-18.jpg";
-import gallery19 from "../assets/gallery/gallery-19.jpg";
 import gallery20 from "../assets/gallery/gallery-20.jpg";
 import gallery21 from "../assets/gallery/gallery-21.jpg";
 import gallery22 from "../assets/gallery/gallery-22.jpg";
 import gallery23 from "../assets/gallery/gallery-23.jpg";
-import gallery24 from "../assets/gallery/gallery-24.jpg";
 import gallery25 from "../assets/gallery/gallery-25.jpg";
 import gallery26 from "../assets/gallery/gallery-26.jpg";
 import gallery27 from "../assets/gallery/gallery-27.jpg";
@@ -103,29 +93,19 @@ import nails10Mp4 from "../assets/video/nails-10.mp4";
 import nails10Poster from "../assets/video/nails-10-poster.jpg";
 
 const photos = [
-  { src: gallery1, category: "Hair" },
   { src: gallery2, category: "Hair" },
   { src: gallery3, category: "Hair" },
   { src: gallery4, category: "Hair" },
-  { src: gallery5, category: "Hair" },
-  { src: gallery6, category: "Hair" },
-  { src: gallery7, category: "Hair" },
-  { src: gallery8, category: "Hair" },
   { src: gallery9, category: "Hair" },
-  { src: gallery10, category: "Hair" },
-  { src: gallery11, category: "Hair" },
   { src: gallery12, category: "Hair" },
   { src: gallery13, category: "Hair" },
-  { src: gallery14, category: "Hair" },
   { src: gallery15, category: "Hair" },
   { src: gallery17, category: "Hair" },
   { src: gallery18, category: "Hair" },
-  { src: gallery19, category: "Hair" },
   { src: gallery20, category: "Hair" },
   { src: gallery21, category: "Hair" },
   { src: gallery22, category: "Hair" },
   { src: gallery23, category: "Hair" },
-  { src: gallery24, category: "Hair" },
   { src: gallery25, category: "Hair" },
   { src: gallery26, category: "Hair" },
   { src: gallery27, category: "Hair" },

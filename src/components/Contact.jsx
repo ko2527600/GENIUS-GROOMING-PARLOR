@@ -3,10 +3,8 @@ import BackgroundSlideshow from "./BackgroundSlideshow";
 import gallery2 from "../assets/gallery/gallery-2.jpg";
 import gallery3 from "../assets/gallery/gallery-3.jpg";
 import gallery4 from "../assets/gallery/gallery-4.jpg";
-import gallery5 from "../assets/gallery/gallery-5.jpg";
-import gallery7 from "../assets/gallery/gallery-7.jpg";
 
-const bgImages = [gallery2, gallery3, gallery4, gallery5, gallery7];
+const bgImages = [gallery2, gallery3, gallery4];
 
 export default function Contact() {
   return (
