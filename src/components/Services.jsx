@@ -107,6 +107,9 @@ import dreadlocksGallery7 from "../assets/gallery/gallery-74.jpg";
 import dreadlocksGallery8 from "../assets/gallery/gallery-75.jpg";
 import dreadlocksGallery9 from "../assets/gallery/gallery-76.jpg";
 import dreadlocksGallery10 from "../assets/gallery/gallery-77.jpg";
+import lashesGallery1 from "../assets/gallery/gallery-78.jpg";
+import lashesGallery2 from "../assets/gallery/gallery-79.jpg";
+import lashesGallery3 from "../assets/gallery/gallery-80.jpg";
 
 const serviceGroups = groupServicesByCategory(services);
 const TABS = ["All", ...serviceGroups.map((g) => g.category)];
@@ -154,6 +157,11 @@ const serviceMedia = {
     { type: "photo", src: dreadlocksGallery8 },
     { type: "photo", src: dreadlocksGallery9 },
     { type: "photo", src: dreadlocksGallery10 },
+  ],
+  lashes: [
+    { type: "photo", src: lashesGallery1 },
+    { type: "photo", src: lashesGallery2 },
+    { type: "photo", src: lashesGallery3 },
   ],
   braiding: [
     { type: "video", mp4: braiding1Mp4, poster: braiding1Poster },
