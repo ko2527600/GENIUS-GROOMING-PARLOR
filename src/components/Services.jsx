@@ -77,6 +77,36 @@ import nails9Mp4 from "../assets/video/nails-9.mp4";
 import nails9Poster from "../assets/video/nails-9-poster.jpg";
 import nails10Mp4 from "../assets/video/nails-10.mp4";
 import nails10Poster from "../assets/video/nails-10-poster.jpg";
+import pixieGallery1 from "../assets/gallery/gallery-48.jpg";
+import pixieGallery2 from "../assets/gallery/gallery-49.jpg";
+import pixieGallery3 from "../assets/gallery/gallery-50.jpg";
+import pixieGallery4 from "../assets/gallery/gallery-51.jpg";
+import pixieGallery5 from "../assets/gallery/gallery-52.jpg";
+import pixieGallery6 from "../assets/gallery/gallery-53.jpg";
+import pixieGallery7 from "../assets/gallery/gallery-54.jpg";
+import pixieGallery8 from "../assets/gallery/gallery-55.jpg";
+import coloringGallery1 from "../assets/gallery/gallery-56.jpg";
+import coloringGallery2 from "../assets/gallery/gallery-57.jpg";
+import coloringGallery3 from "../assets/gallery/gallery-58.jpg";
+import coloringGallery4 from "../assets/gallery/gallery-59.jpg";
+import coloringGallery5 from "../assets/gallery/gallery-60.jpg";
+import coloringGallery6 from "../assets/gallery/gallery-61.jpg";
+import coloringGallery7 from "../assets/gallery/gallery-62.jpg";
+import coloringGallery8 from "../assets/gallery/gallery-63.jpg";
+import coloringGallery9 from "../assets/gallery/gallery-64.jpg";
+import coloringGallery10 from "../assets/gallery/gallery-65.jpg";
+import coloringGallery11 from "../assets/gallery/gallery-66.jpg";
+import coloringGallery12 from "../assets/gallery/gallery-67.jpg";
+import dreadlocksGallery1 from "../assets/gallery/gallery-68.jpg";
+import dreadlocksGallery2 from "../assets/gallery/gallery-69.jpg";
+import dreadlocksGallery3 from "../assets/gallery/gallery-70.jpg";
+import dreadlocksGallery4 from "../assets/gallery/gallery-71.jpg";
+import dreadlocksGallery5 from "../assets/gallery/gallery-72.jpg";
+import dreadlocksGallery6 from "../assets/gallery/gallery-73.jpg";
+import dreadlocksGallery7 from "../assets/gallery/gallery-74.jpg";
+import dreadlocksGallery8 from "../assets/gallery/gallery-75.jpg";
+import dreadlocksGallery9 from "../assets/gallery/gallery-76.jpg";
+import dreadlocksGallery10 from "../assets/gallery/gallery-77.jpg";
 
 const serviceGroups = groupServicesByCategory(services);
 const TABS = ["All", ...serviceGroups.map((g) => g.category)];
@@ -88,6 +118,42 @@ const serviceMedia = {
   haircut: [
     { type: "video", mp4: haircut1Mp4, poster: haircut1Poster },
     { type: "video", mp4: haircut2Mp4, poster: haircut2Poster },
+  ],
+  "pixie-cut": [
+    { type: "photo", src: pixieGallery1 },
+    { type: "photo", src: pixieGallery2 },
+    { type: "photo", src: pixieGallery3 },
+    { type: "photo", src: pixieGallery4 },
+    { type: "photo", src: pixieGallery5 },
+    { type: "photo", src: pixieGallery6 },
+    { type: "photo", src: pixieGallery7 },
+    { type: "photo", src: pixieGallery8 },
+  ],
+  coloring: [
+    { type: "photo", src: coloringGallery1 },
+    { type: "photo", src: coloringGallery2 },
+    { type: "photo", src: coloringGallery3 },
+    { type: "photo", src: coloringGallery4 },
+    { type: "photo", src: coloringGallery5 },
+    { type: "photo", src: coloringGallery6 },
+    { type: "photo", src: coloringGallery7 },
+    { type: "photo", src: coloringGallery8 },
+    { type: "photo", src: coloringGallery9 },
+    { type: "photo", src: coloringGallery10 },
+    { type: "photo", src: coloringGallery11 },
+    { type: "photo", src: coloringGallery12 },
+  ],
+  dreadlocks: [
+    { type: "photo", src: dreadlocksGallery1 },
+    { type: "photo", src: dreadlocksGallery2 },
+    { type: "photo", src: dreadlocksGallery3 },
+    { type: "photo", src: dreadlocksGallery4 },
+    { type: "photo", src: dreadlocksGallery5 },
+    { type: "photo", src: dreadlocksGallery6 },
+    { type: "photo", src: dreadlocksGallery7 },
+    { type: "photo", src: dreadlocksGallery8 },
+    { type: "photo", src: dreadlocksGallery9 },
+    { type: "photo", src: dreadlocksGallery10 },
   ],
   braiding: [
     { type: "video", mp4: braiding1Mp4, poster: braiding1Poster },
