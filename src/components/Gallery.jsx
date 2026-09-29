@@ -37,6 +37,14 @@ import gallery44 from "../assets/gallery/gallery-44.jpg";
 import gallery45 from "../assets/gallery/gallery-45.jpg";
 import gallery46 from "../assets/gallery/gallery-46.jpg";
 import gallery47 from "../assets/gallery/gallery-47.jpg";
+import gallery48 from "../assets/gallery/gallery-48.jpg";
+import gallery49 from "../assets/gallery/gallery-49.jpg";
+import gallery50 from "../assets/gallery/gallery-50.jpg";
+import gallery51 from "../assets/gallery/gallery-51.jpg";
+import gallery52 from "../assets/gallery/gallery-52.jpg";
+import gallery53 from "../assets/gallery/gallery-53.jpg";
+import gallery54 from "../assets/gallery/gallery-54.jpg";
+import gallery55 from "../assets/gallery/gallery-55.jpg";
 import process1Webm from "../assets/video/process-1.webm";
 import process1Mp4 from "../assets/video/process-1.mp4";
 import process1Poster from "../assets/video/process-1-poster.jpg";
@@ -109,6 +117,14 @@ const photos = [
   { src: gallery25, category: "Hair" },
   { src: gallery26, category: "Hair" },
   { src: gallery27, category: "Hair" },
+  { src: gallery48, category: "Hair" },
+  { src: gallery49, category: "Hair" },
+  { src: gallery50, category: "Hair" },
+  { src: gallery51, category: "Hair" },
+  { src: gallery52, category: "Hair" },
+  { src: gallery53, category: "Hair" },
+  { src: gallery54, category: "Hair" },
+  { src: gallery55, category: "Hair" },
   { src: gallery28, category: "Nails" },
   { src: gallery29, category: "Nails" },
   { src: gallery30, category: "Nails" },
