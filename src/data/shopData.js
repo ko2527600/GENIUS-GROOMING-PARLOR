@@ -4,7 +4,7 @@
 export const shop = {
   name: "Genius Grooming Parlor",
   type: "Unisex Salon",
-  tagline: "Sharp Fades. Sharper Style.",
+  tagline: "Any Style, Any Day, Anytime.",
   phone: "+233 24 708 3940",
   phone2: "+233 53 092 5603",
   whatsapp: "233247083940",

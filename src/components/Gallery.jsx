@@ -67,6 +67,9 @@ import gallery74 from "../assets/gallery/gallery-74.jpg";
 import gallery75 from "../assets/gallery/gallery-75.jpg";
 import gallery76 from "../assets/gallery/gallery-76.jpg";
 import gallery77 from "../assets/gallery/gallery-77.jpg";
+import gallery78 from "../assets/gallery/gallery-78.jpg";
+import gallery79 from "../assets/gallery/gallery-79.jpg";
+import gallery80 from "../assets/gallery/gallery-80.jpg";
 import process1Webm from "../assets/video/process-1.webm";
 import process1Mp4 from "../assets/video/process-1.mp4";
 import process1Poster from "../assets/video/process-1-poster.jpg";
@@ -189,6 +192,9 @@ const photos = [
   { src: gallery45, category: "Nails" },
   { src: gallery46, category: "Nails" },
   { src: gallery47, category: "Nails" },
+  { src: gallery78, category: "Beauty" },
+  { src: gallery79, category: "Beauty" },
+  { src: gallery80, category: "Beauty" },
 ];
 
 const videos = [
