@@ -58,6 +58,7 @@ export default function Booking() {
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [inspirationPhoto, setInspirationPhoto] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [dashboardSaveFailed, setDashboardSaveFailed] = useState(false);
 
   function toggleService(s) {
     setSelectedServices((prev) =>
@@ -185,7 +186,8 @@ export default function Booking() {
     setDone(true);
 
     // Best-effort save to the admin dashboard - the WhatsApp/SMS flow
-    // below doesn't depend on this succeeding.
+    // below doesn't depend on this succeeding, but a failure here should
+    // still be visible (console + dashboard-save state) instead of silent.
     fetch("/api/bookings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -199,7 +201,18 @@ export default function Booking() {
         payment: `${payment.currency}${payment.amount} sent to ${payment.momoNumber} (ref: ${paymentRef})`,
         inspirationPhoto,
       }),
-    }).catch(() => {});
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          console.error("Dashboard save failed:", res.status, body);
+          setDashboardSaveFailed(true);
+        }
+      })
+      .catch((err) => {
+        console.error("Dashboard save failed:", err);
+        setDashboardSaveFailed(true);
+      });
   }
 
   if (done) {
@@ -231,6 +244,12 @@ export default function Booking() {
             {payment.amount} booking fee was sent to {payment.momoNumber} — we'll
             confirm your slot once it's received.
           </p>
+
+          {dashboardSaveFailed && (
+            <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
+              Please still tap Send below — it's the message that reaches us.
+            </p>
+          )}
 
           <div className="mt-6 flex flex-col gap-3">
             <a
