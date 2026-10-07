@@ -1,6 +1,7 @@
 import { useState } from "react";
 import LazyVideo from "./LazyVideo";
 import Lightbox from "./Lightbox";
+import useMedia from "../hooks/useMedia";
 import gallery2 from "../assets/gallery/gallery-2.jpg";
 import gallery3 from "../assets/gallery/gallery-3.jpg";
 import gallery4 from "../assets/gallery/gallery-4.jpg";
@@ -67,6 +68,9 @@ import gallery74 from "../assets/gallery/gallery-74.jpg";
 import gallery75 from "../assets/gallery/gallery-75.jpg";
 import gallery76 from "../assets/gallery/gallery-76.jpg";
 import gallery77 from "../assets/gallery/gallery-77.jpg";
+import gallery78 from "../assets/gallery/gallery-78.jpg";
+import gallery79 from "../assets/gallery/gallery-79.jpg";
+import gallery80 from "../assets/gallery/gallery-80.jpg";
 import process1Webm from "../assets/video/process-1.webm";
 import process1Mp4 from "../assets/video/process-1.mp4";
 import process1Poster from "../assets/video/process-1-poster.jpg";
@@ -189,6 +193,9 @@ const photos = [
   { src: gallery45, category: "Nails" },
   { src: gallery46, category: "Nails" },
   { src: gallery47, category: "Nails" },
+  { src: gallery78, category: "Beauty" },
+  { src: gallery79, category: "Beauty" },
+  { src: gallery80, category: "Beauty" },
 ];
 
 const videos = [
@@ -227,16 +234,27 @@ export default function Gallery() {
   const [activeTab, setActiveTab] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [showAll, setShowAll] = useState(false);
+  const media = useMedia();
 
   function selectTab(tab) {
     setActiveTab(tab);
     setShowAll(false);
   }
 
+  const uploadedPhotos = media
+    .filter((m) => m.type === "photo")
+    .map((m) => ({ src: m.url, category: m.category }));
+  const uploadedVideos = media
+    .filter((m) => m.type === "video")
+    .map((m) => ({ mp4: m.url, category: m.category }));
+
+  const allPhotos = [...photos, ...uploadedPhotos];
+  const allVideos = [...videos, ...uploadedVideos];
+
   const filteredVideos =
-    activeTab === "All" ? videos : videos.filter((v) => v.category === activeTab);
+    activeTab === "All" ? allVideos : allVideos.filter((v) => v.category === activeTab);
   const filteredPhotos =
-    activeTab === "All" ? photos : photos.filter((p) => p.category === activeTab);
+    activeTab === "All" ? allPhotos : allPhotos.filter((p) => p.category === activeTab);
   const isEmpty = filteredVideos.length === 0 && filteredPhotos.length === 0;
   const totalCount = filteredVideos.length + filteredPhotos.length;
   const lightboxImages = filteredPhotos.map((p) => p.src);

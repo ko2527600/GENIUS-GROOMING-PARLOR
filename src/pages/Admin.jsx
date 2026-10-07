@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { shop, payment } from "../data/shopData";
+import { upload } from "@vercel/blob/client";
+import { shop, payment, services, groupServicesByCategory } from "../data/shopData";
 import logo from "../assets/logo.png";
 import CalendarView from "../components/CalendarView";
+
+const MEDIA_CATEGORIES = ["Hair", "Nails", "Beauty"];
+const serviceGroupsForMedia = groupServicesByCategory(services);
 
 const STATUS_OPTIONS = ["new", "confirmed", "completed", "cancelled"];
 
@@ -145,6 +149,15 @@ function BookingCard({ booking, onStatusChange }) {
           <dt className="w-24 shrink-0 font-medium text-gray-800">Time</dt>
           <dd>{booking.time}</dd>
         </div>
+        <div className="flex gap-2">
+          <dt className="w-24 shrink-0 font-medium text-gray-800">Customer</dt>
+          <dd>
+            {booking.visitedBefore ? "Returning" : "First-time"}
+            {booking.visitedBefore && booking.previousStylist
+              ? ` — previously with ${booking.previousStylist}`
+              : ""}
+          </dd>
+        </div>
         {booking.payment && (
           <div className="flex gap-2">
             <dt className="w-24 shrink-0 font-medium text-gray-800">Fee</dt>
@@ -192,7 +205,7 @@ function CustomerCard({ customer }) {
   async function handleRemind() {
     setStatus("sending");
     try {
-      const res = await fetch("/api/customers/remind", {
+      const res = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: customer.phone }),
@@ -519,8 +532,252 @@ function StatTile({ label, value, accent }) {
   );
 }
 
+function MediaCard({ item, onUpdate, onDelete }) {
+  const [category, setCategory] = useState(item.category);
+  const [serviceId, setServiceId] = useState(item.serviceId || "");
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  async function save() {
+    setSaving(true);
+    await onUpdate(item.id, { category, serviceId: serviceId || null });
+    setSaving(false);
+  }
+
+  async function remove() {
+    if (!window.confirm("Remove this photo/video from the site?")) return;
+    setDeleting(true);
+    await onDelete(item.id);
+  }
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="aspect-square bg-gray-100">
+        {item.type === "video" ? (
+          <video src={item.url} className="h-full w-full object-cover" muted />
+        ) : (
+          <img src={item.url} alt="" className="h-full w-full object-cover" />
+        )}
+      </div>
+      <div className="space-y-2 p-3">
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full rounded border border-gray-300 p-1.5 text-sm"
+        >
+          {MEDIA_CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+        <select
+          value={serviceId}
+          onChange={(e) => setServiceId(e.target.value)}
+          className="w-full rounded border border-gray-300 p-1.5 text-sm"
+        >
+          <option value="">Gallery only (no service)</option>
+          {serviceGroupsForMedia.map((g) => (
+            <optgroup key={g.category} label={g.category}>
+              {g.items.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+        <div className="flex gap-2">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="flex-1 rounded-full bg-ink py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
+          <button
+            onClick={remove}
+            disabled={deleting}
+            className="flex-1 rounded-full border border-red py-1.5 text-xs font-semibold text-red disabled:opacity-50"
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MediaView() {
+  const [media, setMedia] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [uploadCategory, setUploadCategory] = useState("Hair");
+  const [uploadServiceId, setUploadServiceId] = useState("");
+
+  async function load() {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/media");
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        setError(data.error || "Failed to load media");
+        return;
+      }
+      setMedia(data.media);
+    } catch {
+      setError("Network error - please try again");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function handleFileChange(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    const type = file.type.startsWith("video/") ? "video" : "photo";
+    setUploading(true);
+    setUploadError("");
+    try {
+      await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/media",
+        clientPayload: JSON.stringify({
+          type,
+          category: uploadCategory,
+          serviceId: uploadServiceId || null,
+        }),
+      });
+      await load();
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setUploadError("Upload failed - please try again");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleUpdate(id, patch) {
+    setMedia((prev) => prev.map((m) => (m.id === id ? { ...m, ...patch } : m)));
+    try {
+      const res = await fetch(`/api/media?id=${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      load();
+    }
+  }
+
+  async function handleDelete(id) {
+    setMedia((prev) => prev.filter((m) => m.id !== id));
+    try {
+      const res = await fetch(`/api/media?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+    } catch {
+      load();
+    }
+  }
+
+  return (
+    <div className="mt-6">
+      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h3 className="font-bold">Add a Photo or Video</h3>
+        <p className="mt-1 text-sm text-gray-500">
+          Uploads here show up immediately on the website's "Our Work" gallery, and
+          under a service's tile if you pick one below.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Gallery Category
+            </label>
+            <select
+              value={uploadCategory}
+              onChange={(e) => setUploadCategory(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-gray-300 p-2.5"
+            >
+              {MEDIA_CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Attach to Service (optional)
+            </label>
+            <select
+              value={uploadServiceId}
+              onChange={(e) => setUploadServiceId(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-gray-300 p-2.5"
+            >
+              <option value="">Gallery only</option>
+              {serviceGroupsForMedia.map((g) => (
+                <optgroup key={g.category} label={g.category}>
+                  {g.items.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <label className="mt-4 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 transition hover:border-brand">
+          <span className="text-4xl">📷</span>
+          <span className="mt-2 text-sm font-medium text-gray-600">
+            {uploading ? "Uploading..." : "Click to choose a photo or video"}
+          </span>
+          <input
+            type="file"
+            accept="image/*,video/*"
+            onChange={handleFileChange}
+            disabled={uploading}
+            className="hidden"
+          />
+        </label>
+        {uploadError && <p className="mt-2 text-sm text-red">{uploadError}</p>}
+      </div>
+
+      {error && <p className="mt-6 text-red">{error}</p>}
+
+      {loading ? (
+        <p className="mt-8 text-center text-gray-500">Loading media...</p>
+      ) : media.length === 0 ? (
+        <p className="mt-8 text-center text-gray-500">No uploads yet.</p>
+      ) : (
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          {media.map((item) => (
+            <MediaCard
+              key={item.id}
+              item={item}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Dashboard({ onLoggedOut }) {
-  const [tab, setTab] = useState("bookings"); // bookings | calendar | customers | insights | analytics
+  const [tab, setTab] = useState("bookings"); // bookings | calendar | customers | insights | analytics | media
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -638,15 +895,17 @@ function Dashboard({ onLoggedOut }) {
       <section className="mx-auto max-w-5xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-2xl font-bold">
-            {tab === "bookings" 
-              ? "Bookings" 
+            {tab === "bookings"
+              ? "Bookings"
               : tab === "calendar"
                 ? "Calendar"
                 : tab === "customers"
                   ? "Customers"
                   : tab === "insights"
                     ? "Interest"
-                    : "Analytics"}
+                    : tab === "media"
+                      ? "Photos & Videos"
+                      : "Analytics"}
           </h1>
           {(tab === "bookings" || tab === "calendar") && (
             <button
@@ -693,6 +952,7 @@ function Dashboard({ onLoggedOut }) {
             { id: "bookings", label: "Bookings" },
             { id: "calendar", label: "Calendar" },
             { id: "customers", label: "Customers" },
+            { id: "media", label: "Photos & Videos" },
             { id: "analytics", label: "Analytics" },
             { id: "insights", label: "Interest" },
           ].map((t) => (
@@ -710,6 +970,8 @@ function Dashboard({ onLoggedOut }) {
 
         {tab === "customers" ? (
           <CustomersView />
+        ) : tab === "media" ? (
+          <MediaView />
         ) : tab === "insights" ? (
           <InsightsView />
         ) : tab === "analytics" ? (
@@ -823,6 +1085,15 @@ function Dashboard({ onLoggedOut }) {
                   <div className="flex gap-2">
                     <dt className="w-28 shrink-0 font-medium text-gray-800">Time</dt>
                     <dd className="text-gray-600">{selectedBooking.time}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="w-28 shrink-0 font-medium text-gray-800">Customer</dt>
+                    <dd className="text-gray-600">
+                      {selectedBooking.visitedBefore ? "Returning" : "First-time"}
+                      {selectedBooking.visitedBefore && selectedBooking.previousStylist
+                        ? ` — previously with ${selectedBooking.previousStylist}`
+                        : ""}
+                    </dd>
                   </div>
                   {selectedBooking.payment && (
                     <div className="flex gap-2">

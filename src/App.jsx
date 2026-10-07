@@ -1,12 +1,16 @@
+import { Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import BookingPage from './pages/BookingPage'
-import Admin from './pages/Admin'
 import LiveChat from './components/LiveChat'
 import WelcomePopup from './components/WelcomePopup'
 import ScrollToHash from './ScrollToHash'
+
+// Code-split: Admin pulls in the Blob upload client, which regular site
+// visitors (booking, gallery, services) never need to download.
+const Admin = lazy(() => import('./pages/Admin'))
 
 function App() {
   const { pathname } = useLocation()
@@ -22,7 +26,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<BookingPage />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route
+            path="/admin"
+            element={
+              <Suspense fallback={null}>
+                <Admin />
+              </Suspense>
+            }
+          />
         </Routes>
       </main>
       {!isAdmin && <Footer />}

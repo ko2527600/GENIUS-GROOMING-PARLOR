@@ -19,11 +19,27 @@ function serviceSummary(selectedServices, otherService) {
   return names.join(", ");
 }
 
-function buildMessage({ customer, barber, selectedServices, otherService, time, paymentRef }) {
+function buildMessage({
+  customer,
+  barber,
+  selectedServices,
+  otherService,
+  time,
+  paymentRef,
+  visitedBefore,
+  previousStylist,
+}) {
+  const visitLine =
+    visitedBefore === true
+      ? `Returning customer${previousStylist.trim() ? ` - previously with ${previousStylist.trim()}` : ""}\n`
+      : visitedBefore === false
+        ? "First-time customer\n"
+        : "";
   return (
     `New booking request - ${shop.name}\n` +
     `Name: ${customer.name}\n` +
     `Phone: ${customer.phone}\n` +
+    visitLine +
     `Stylist: ${barber?.name}\n` +
     `Service: ${serviceSummary(selectedServices, otherService)}\n` +
     `Time: ${time}\n` +
@@ -58,6 +74,9 @@ export default function Booking() {
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [inspirationPhoto, setInspirationPhoto] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [dashboardSaveFailed, setDashboardSaveFailed] = useState(false);
+  const [visitedBefore, setVisitedBefore] = useState(null); // null | true | false
+  const [previousStylist, setPreviousStylist] = useState("");
 
   function toggleService(s) {
     setSelectedServices((prev) =>
@@ -163,6 +182,8 @@ export default function Booking() {
     setPaymentRef("");
     setCustomer({ name: "", phone: "" });
     setInspirationPhoto(null);
+    setVisitedBefore(null);
+    setPreviousStylist("");
   }
 
   const canNext =
@@ -185,7 +206,8 @@ export default function Booking() {
     setDone(true);
 
     // Best-effort save to the admin dashboard - the WhatsApp/SMS flow
-    // below doesn't depend on this succeeding.
+    // below doesn't depend on this succeeding, but a failure here should
+    // still be visible (console + dashboard-save state) instead of silent.
     fetch("/api/bookings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -198,8 +220,21 @@ export default function Booking() {
         date,
         payment: `${payment.currency}${payment.amount} sent to ${payment.momoNumber} (ref: ${paymentRef})`,
         inspirationPhoto,
+        visitedBefore,
+        previousStylist,
       }),
-    }).catch(() => {});
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          console.error("Dashboard save failed:", res.status, body);
+          setDashboardSaveFailed(true);
+        }
+      })
+      .catch((err) => {
+        console.error("Dashboard save failed:", err);
+        setDashboardSaveFailed(true);
+      });
   }
 
   if (done) {
@@ -210,6 +245,8 @@ export default function Booking() {
       otherService,
       time,
       paymentRef,
+      visitedBefore,
+      previousStylist,
     });
 
     return (
@@ -231,6 +268,12 @@ export default function Booking() {
             {payment.amount} booking fee was sent to {payment.momoNumber} — we'll
             confirm your slot once it's received.
           </p>
+
+          {dashboardSaveFailed && (
+            <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
+              Please still tap Send below — it's the message that reaches us.
+            </p>
+          )}
 
           <div className="mt-6 flex flex-col gap-3">
             <a
@@ -555,6 +598,50 @@ export default function Booking() {
                     src={inspirationPhoto}
                     alt="Inspiration"
                     className="mt-2 h-24 w-24 rounded-lg object-cover"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Have you visited us before?</label>
+              <div className="mt-2 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setVisitedBefore(true)}
+                  className={`flex-1 rounded-full border py-2 text-sm font-semibold transition ${
+                    visitedBefore === true
+                      ? "border-brand bg-brand/10"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVisitedBefore(false);
+                    setPreviousStylist("");
+                  }}
+                  className={`flex-1 rounded-full border py-2 text-sm font-semibold transition ${
+                    visitedBefore === false
+                      ? "border-brand bg-brand/10"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  No
+                </button>
+              </div>
+              {visitedBefore === true && (
+                <div className="mt-3">
+                  <label className="text-sm font-medium">
+                    Which stylist attended to you? (if you remember)
+                  </label>
+                  <input
+                    value={previousStylist}
+                    onChange={(e) => setPreviousStylist(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+                    placeholder="e.g. Stylist One, or their name"
                   />
                 </div>
               )}
