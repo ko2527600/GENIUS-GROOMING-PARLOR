@@ -691,6 +691,7 @@ function MediaView() {
   const [uploadServiceId, setUploadServiceId] = useState("");
   const [siteConfig, setSiteConfig] = useState({ hiddenStaticIds: [], categoryOverrides: {} });
   const [staticFilter, setStaticFilter] = useState("all"); // all | shown | hidden
+  const [actionError, setActionError] = useState("");
 
   async function load() {
     setLoading(true);
@@ -720,6 +721,7 @@ function MediaView() {
   }, []);
 
   async function handleToggleStaticHidden(staticId, hidden) {
+    setActionError("");
     setSiteConfig((prev) => ({
       ...prev,
       hiddenStaticIds: hidden
@@ -732,13 +734,19 @@ function MediaView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ staticId, hidden }),
       });
-      if (!res.ok) throw new Error();
-    } catch {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error);
+    } catch (err) {
+      setActionError(
+        (err?.message || "Failed to update - please try again") +
+          " The change shown has been undone.",
+      );
       load();
     }
   }
 
   async function handleSetStaticCategory(staticId, category) {
+    setActionError("");
     setSiteConfig((prev) => ({
       ...prev,
       categoryOverrides: { ...prev.categoryOverrides, [staticId]: category },
@@ -749,8 +757,13 @@ function MediaView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ staticId, category }),
       });
-      if (!res.ok) throw new Error();
-    } catch {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error);
+    } catch (err) {
+      setActionError(
+        (err?.message || "Failed to update - please try again") +
+          " The change shown has been undone.",
+      );
       load();
     }
   }
@@ -769,7 +782,6 @@ function MediaView() {
       await upload(uploadFile.name, uploadFile, {
         access: "public",
         handleUploadUrl: "/api/media",
-        multipart: true,
         onUploadProgress: ({ percentage }) => setUploadProgress(percentage),
         clientPayload: JSON.stringify({
           type,
@@ -788,6 +800,7 @@ function MediaView() {
   }
 
   async function handleUpdate(id, patch) {
+    setActionError("");
     setMedia((prev) => prev.map((m) => (m.id === id ? { ...m, ...patch } : m)));
     try {
       const res = await fetch(`/api/media?id=${id}`, {
@@ -795,18 +808,29 @@ function MediaView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patch),
       });
-      if (!res.ok) throw new Error();
-    } catch {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error);
+    } catch (err) {
+      setActionError(
+        (err?.message || "Failed to save changes - please try again") +
+          " The change shown has been undone.",
+      );
       load();
     }
   }
 
   async function handleDelete(id) {
+    setActionError("");
     setMedia((prev) => prev.filter((m) => m.id !== id));
     try {
       const res = await fetch(`/api/media?id=${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
-    } catch {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error);
+    } catch (err) {
+      setActionError(
+        (err?.message || "Failed to delete - please try again") +
+          " It has been restored below.",
+      );
       load();
     }
   }
@@ -878,6 +902,11 @@ function MediaView() {
       </div>
 
       {error && <p className="mt-6 text-red">{error}</p>}
+      {actionError && (
+        <p className="mt-6 rounded-lg bg-red/10 px-3 py-2 text-sm font-medium text-red">
+          {actionError}
+        </p>
+      )}
 
       {loading ? (
         <p className="mt-8 text-center text-gray-500">Loading media...</p>

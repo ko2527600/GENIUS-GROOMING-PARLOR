@@ -140,7 +140,6 @@ export default function Booking() {
       const blob = await upload(`inspiration/${Date.now()}-${uploadFile.name}`, uploadFile, {
         access: 'public',
         handleUploadUrl: '/api/upload-inspiration',
-        multipart: true,
         onUploadProgress: ({ percentage }) => setUploadPhotoProgress(percentage),
       });
       setInspirationPhoto(blob.url);

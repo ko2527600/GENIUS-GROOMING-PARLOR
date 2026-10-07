@@ -70,7 +70,16 @@ export async function deleteMedia(id) {
   const record = await readRecord(pathname);
   if (!record) return false;
 
-  await del(record.filePathname);
+  // The metadata record is what the admin dashboard and the site's Gallery
+  // actually list from - delete it regardless of whether removing the
+  // underlying file succeeds, so a storage hiccup never leaves an item
+  // stuck looking undeletable. A failed file delete just leaves an orphaned
+  // blob (a storage cost, not a user-facing bug) instead of blocking removal.
+  try {
+    await del(record.filePathname);
+  } catch (err) {
+    console.error(`Failed to delete underlying file for media ${id}:`, err);
+  }
   await del(pathname);
   return true;
 }
