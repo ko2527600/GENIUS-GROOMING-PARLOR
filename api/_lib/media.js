@@ -1,8 +1,8 @@
 import { put, list, get, del } from "@vercel/blob";
 import crypto from "crypto";
 
-const PREFIX = "media/"; // metadata records (the actual photo/video files
-// live wherever the client-side upload put them, referenced by `url`/`pathname`)
+const PREFIX = "media/"; // metadata records
+const FILES_PREFIX = "media-files/"; // the actual uploaded photo/video files
 
 function newId() {
   const ts = Date.now().toString(36);
@@ -16,15 +16,30 @@ async function readRecord(pathname) {
   return new Response(result.stream).json();
 }
 
-// Writes the metadata record for a file that was already uploaded directly
-// from the browser to Blob storage (see api/media-upload.js) - this function
-// never touches the file itself.
-export async function createMediaRecord({ url, pathname, type, category, serviceId }) {
+// Uploads a file sent as base64 in the request body (relayed through our
+// own server, not the browser talking to Blob storage directly) - see
+// api/media.js's POST handler. Direct browser-to-Blob client uploads hit an
+// unresolved CORS block on this custom domain, so everything goes through
+// here instead; client-side compression (resize + recompress) keeps photos
+// comfortably under Vercel's request body limit despite the detour.
+export async function createMedia({ file, filename, contentType, type, category, serviceId }) {
   const id = newId();
+  const extFromName = filename?.includes(".") ? filename.split(".").pop() : null;
+  const ext = extFromName || (type === "video" ? "mp4" : "jpg");
+
+  const base64Data = file.replace(/^data:[^;]+;base64,/, "");
+  const buffer = Buffer.from(base64Data, "base64");
+
+  const fileBlob = await put(`${FILES_PREFIX}${id}.${ext}`, buffer, {
+    access: "public",
+    addRandomSuffix: true,
+    contentType: contentType || (type === "video" ? "video/mp4" : "image/jpeg"),
+  });
+
   const record = {
     id,
-    url,
-    filePathname: pathname,
+    url: fileBlob.url,
+    filePathname: fileBlob.pathname,
     type,
     category: category || "Hair",
     serviceId: serviceId || null,

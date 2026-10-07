@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { upload } from "@vercel/blob/client";
 import { shop, payment, services, groupServicesByCategory } from "../data/shopData";
 import { flattenStaticMedia } from "../data/mediaLibrary";
 import compressImage from "../utils/compressImage";
+import fileToBase64 from "../utils/fileToBase64";
 import logo from "../assets/logo.png";
 import CalendarView from "../components/CalendarView";
 
@@ -10,6 +10,9 @@ const staticMediaItems = flattenStaticMedia();
 
 const MEDIA_CATEGORIES = ["Hair", "Nails", "Beauty"];
 const serviceGroupsForMedia = groupServicesByCategory(services);
+// Vercel's serverless function request body is capped at ~4.5MB; base64
+// inflates a file by ~33%, so cap the raw video well under that.
+const MAX_UPLOAD_BYTES = 3 * 1024 * 1024;
 
 const STATUS_OPTIONS = ["new", "confirmed", "completed", "cancelled"];
 
@@ -685,7 +688,6 @@ function MediaView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState("");
   const [uploadCategory, setUploadCategory] = useState("Hair");
   const [uploadServiceId, setUploadServiceId] = useState("");
@@ -774,28 +776,45 @@ function MediaView() {
     if (!file) return;
 
     const type = file.type.startsWith("video/") ? "video" : "photo";
+
+    if (type === "video" && file.size > MAX_UPLOAD_BYTES) {
+      setUploadError(
+        `That video is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). ` +
+          `Videos must be under ${MAX_UPLOAD_BYTES / 1024 / 1024}MB - try trimming the clip.`,
+      );
+      return;
+    }
+
     setUploading(true);
-    setUploadProgress(0);
     setUploadError("");
     try {
       const uploadFile = type === "photo" ? await compressImage(file) : file;
-      await upload(uploadFile.name, uploadFile, {
-        access: "public",
-        handleUploadUrl: "/api/media",
-        onUploadProgress: ({ percentage }) => setUploadProgress(percentage),
-        clientPayload: JSON.stringify({
+      if (uploadFile.size > MAX_UPLOAD_BYTES) {
+        throw new Error(
+          "That file is still too large after compression - try a smaller photo.",
+        );
+      }
+      const base64 = await fileToBase64(uploadFile);
+      const res = await fetch("/api/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          file: base64,
+          filename: uploadFile.name,
+          contentType: uploadFile.type,
           type,
           category: uploadCategory,
           serviceId: uploadServiceId || null,
         }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error);
       await load();
     } catch (err) {
       console.error("Upload failed:", err);
-      setUploadError("Upload failed - please try again");
+      setUploadError(err?.message || "Upload failed - please try again");
     } finally {
       setUploading(false);
-      setUploadProgress(0);
     }
   }
 
@@ -886,9 +905,7 @@ function MediaView() {
         <label className="mt-4 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 transition hover:border-brand">
           <span className="text-4xl">📷</span>
           <span className="mt-2 text-sm font-medium text-gray-600">
-            {uploading
-              ? `Uploading... ${uploadProgress}%`
-              : "Click to choose a photo or video"}
+            {uploading ? "Uploading..." : "Click to choose a photo or video"}
           </span>
           <input
             type="file"

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { upload } from "@vercel/blob/client";
 import compressImage from "../utils/compressImage";
+import fileToBase64 from "../utils/fileToBase64";
 import {
   barbers,
   services,
@@ -76,7 +76,6 @@ export default function Booking() {
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [inspirationPhoto, setInspirationPhoto] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [uploadPhotoProgress, setUploadPhotoProgress] = useState(0);
   const [dashboardSaveFailed, setDashboardSaveFailed] = useState(false);
   const [visitedBefore, setVisitedBefore] = useState(null); // null | true | false
   const [previousStylist, setPreviousStylist] = useState("");
@@ -117,9 +116,11 @@ export default function Booking() {
     fetchAvailableSlots(selectedDate, barber?.name);
   }
 
-  // Handle photo upload - goes straight from the browser to Blob storage
-  // (bypassing the API's request body limit), since phone camera photos
-  // routinely exceed it once base64-encoded.
+  // Handle photo upload - relayed through our own server rather than
+  // uploaded directly from the browser to Blob storage, since direct
+  // client uploads hit an unresolved CORS block on this custom domain.
+  // Client-side compression keeps the payload well under the request
+  // body limit despite the extra hop.
   async function handlePhotoUpload(e) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -134,21 +135,29 @@ export default function Booking() {
     }
 
     setUploadingPhoto(true);
-    setUploadPhotoProgress(0);
     try {
       const uploadFile = await compressImage(file);
-      const blob = await upload(`inspiration/${Date.now()}-${uploadFile.name}`, uploadFile, {
-        access: 'public',
-        handleUploadUrl: '/api/upload-inspiration',
-        onUploadProgress: ({ percentage }) => setUploadPhotoProgress(percentage),
+      if (uploadFile.size > 3 * 1024 * 1024) {
+        throw new Error('That photo is still too large after compression - try a different one.');
+      }
+      const base64 = await fileToBase64(uploadFile);
+      const res = await fetch('/api/upload-inspiration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file: base64,
+          filename: uploadFile.name,
+          contentType: uploadFile.type,
+        }),
       });
-      setInspirationPhoto(blob.url);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error);
+      setInspirationPhoto(data.url);
     } catch (err) {
       console.error('Upload error:', err);
       alert('Failed to upload photo');
     } finally {
       setUploadingPhoto(false);
-      setUploadPhotoProgress(0);
     }
   }
 
@@ -463,9 +472,7 @@ export default function Booking() {
                 <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition hover:border-brand">
                   <span className="text-4xl">📷</span>
                   <span className="mt-2 text-sm font-medium text-gray-600">
-                    {uploadingPhoto
-                      ? `Uploading... ${uploadPhotoProgress}%`
-                      : "Click to upload photo"}
+                    {uploadingPhoto ? "Uploading..." : "Click to upload photo"}
                   </span>
                   <input
                     type="file"
