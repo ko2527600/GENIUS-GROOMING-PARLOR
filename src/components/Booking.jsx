@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { upload } from "@vercel/blob/client";
 import {
   barbers,
   services,
@@ -114,56 +115,33 @@ export default function Booking() {
     fetchAvailableSlots(selectedDate, barber?.name);
   }
 
-  // Handle photo upload
+  // Handle photo upload - goes straight from the browser to Blob storage
+  // (bypassing the API's request body limit), since phone camera photos
+  // routinely exceed it once base64-encoded.
   async function handlePhotoUpload(e) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       alert('Please upload an image file');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image must be less than 5MB');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('Image must be less than 15MB');
       return;
     }
 
     setUploadingPhoto(true);
     try {
-      // Convert file to base64 for simpler upload
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        try {
-          const res = await fetch('/api/upload-inspiration', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              file: event.target.result,
-              filename: file.name,
-              contentType: file.type,
-            }),
-          });
-
-          const data = await res.json();
-          if (res.ok && data.ok) {
-            setInspirationPhoto(data.url);
-          } else {
-            alert('Failed to upload photo');
-          }
-        } catch (err) {
-          console.error('Upload error:', err);
-          alert('Failed to upload photo');
-        } finally {
-          setUploadingPhoto(false);
-        }
-      };
-      reader.readAsDataURL(file);
+      const blob = await upload(`inspiration/${Date.now()}-${file.name}`, file, {
+        access: 'public',
+        handleUploadUrl: '/api/upload-inspiration',
+      });
+      setInspirationPhoto(blob.url);
     } catch (err) {
       console.error('Upload error:', err);
       alert('Failed to upload photo');
+    } finally {
       setUploadingPhoto(false);
     }
   }

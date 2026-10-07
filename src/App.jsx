@@ -3,13 +3,13 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
-import BookingPage from './pages/BookingPage'
 import LiveChat from './components/LiveChat'
 import WelcomePopup from './components/WelcomePopup'
 import ScrollToHash from './ScrollToHash'
 
-// Code-split: Admin pulls in the Blob upload client, which regular site
-// visitors (booking, gallery, services) never need to download.
+// Code-split: both pull in the Blob upload client (for inspiration photo /
+// admin media uploads), which Home-page visitors never need to download.
+const BookingPage = lazy(() => import('./pages/BookingPage'))
 const Admin = lazy(() => import('./pages/Admin'))
 
 function App() {
@@ -25,7 +25,14 @@ function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/booking" element={<BookingPage />} />
+          <Route
+            path="/booking"
+            element={
+              <Suspense fallback={null}>
+                <BookingPage />
+              </Suspense>
+            }
+          />
           <Route
             path="/admin"
             element={
