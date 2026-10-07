@@ -17,7 +17,9 @@ export default async function handler(req, res) {
         return res.status(200).json({ ok: true, config });
       } catch (err) {
         console.error("Failed to load site config:", err);
-        return res.status(500).json({ ok: false, error: "Failed to load site config" });
+        return res
+          .status(500)
+          .json({ ok: false, error: `Failed to load site config: ${err?.message || err}` });
       }
     }
 
@@ -40,7 +42,9 @@ export default async function handler(req, res) {
         return res.status(200).json({ ok: true, config });
       } catch (err) {
         console.error("Failed to update site config:", err);
-        return res.status(500).json({ ok: false, error: "Failed to update site config" });
+        return res
+          .status(500)
+          .json({ ok: false, error: `Failed to update site config: ${err?.message || err}` });
       }
     }
 
@@ -140,7 +144,9 @@ export default async function handler(req, res) {
         return res.status(200).json({ ok: true, media });
       } catch (err) {
         console.error("Failed to update media:", err);
-        return res.status(500).json({ ok: false, error: "Failed to update media" });
+        return res
+          .status(500)
+          .json({ ok: false, error: `Failed to update media: ${err?.message || err}` });
       }
     }
 
@@ -152,7 +158,9 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true });
     } catch (err) {
       console.error("Failed to delete media:", err);
-      return res.status(500).json({ ok: false, error: "Failed to delete media" });
+      return res
+        .status(500)
+        .json({ ok: false, error: `Failed to delete media: ${err?.message || err}` });
     }
   }
 
