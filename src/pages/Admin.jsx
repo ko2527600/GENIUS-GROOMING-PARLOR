@@ -940,6 +940,100 @@ function MediaView() {
   );
 }
 
+function DangerZone({ onBookingsCleared }) {
+  const [clearingBookings, setClearingBookings] = useState(false);
+  const [clearingQuiz, setClearingQuiz] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function handleClearBookings() {
+    const typed = window.prompt(
+      "This permanently deletes every booking AND customer record (Customers is built from booking history). This cannot be undone.\n\nType DELETE ALL BOOKINGS to confirm:",
+    );
+    if (typed === null) return;
+    if (typed !== "DELETE ALL BOOKINGS") {
+      window.alert("Confirmation text didn't match - nothing was deleted.");
+      return;
+    }
+    setClearingBookings(true);
+    setMessage("");
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: typed }),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setMessage(`Deleted ${data.deleted} booking(s) and their customer records.`);
+        onBookingsCleared?.();
+      } else {
+        setMessage(data.error || "Failed to delete bookings");
+      }
+    } catch {
+      setMessage("Network error - please try again");
+    } finally {
+      setClearingBookings(false);
+    }
+  }
+
+  async function handleClearQuiz() {
+    const typed = window.prompt(
+      'This permanently deletes every "Find Your Style" quiz answer. This cannot be undone.\n\nType DELETE ALL QUIZ DATA to confirm:',
+    );
+    if (typed === null) return;
+    if (typed !== "DELETE ALL QUIZ DATA") {
+      window.alert("Confirmation text didn't match - nothing was deleted.");
+      return;
+    }
+    setClearingQuiz(true);
+    setMessage("");
+    try {
+      const res = await fetch("/api/quiz-answers", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: typed }),
+      });
+      const data = await res.json();
+      setMessage(
+        res.ok && data.ok
+          ? `Deleted ${data.deleted} quiz answer(s).`
+          : data.error || "Failed to delete quiz data",
+      );
+    } catch {
+      setMessage("Network error - please try again");
+    } finally {
+      setClearingQuiz(false);
+    }
+  }
+
+  return (
+    <div className="mt-10 rounded-xl border border-red/30 bg-red/5 p-5">
+      <h3 className="font-bold text-red">Danger Zone</h3>
+      <p className="mt-1 text-sm text-gray-600">
+        Use this once, right before going live, to wipe out test data. Both
+        actions are permanent and cannot be undone.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-3">
+        <button
+          onClick={handleClearBookings}
+          disabled={clearingBookings}
+          className="rounded-full border border-red px-4 py-2 text-sm font-semibold text-red transition hover:bg-red hover:text-white disabled:opacity-50"
+        >
+          {clearingBookings ? "Deleting..." : "Clear All Bookings & Customers"}
+        </button>
+        <button
+          onClick={handleClearQuiz}
+          disabled={clearingQuiz}
+          className="rounded-full border border-red px-4 py-2 text-sm font-semibold text-red transition hover:bg-red hover:text-white disabled:opacity-50"
+        >
+          {clearingQuiz ? "Deleting..." : "Clear Quiz Interest Data"}
+        </button>
+      </div>
+      {message && <p className="mt-3 text-sm font-medium text-ink">{message}</p>}
+    </div>
+  );
+}
+
 function Dashboard({ onLoggedOut }) {
   const [tab, setTab] = useState("bookings"); // bookings | calendar | customers | insights | analytics | media
   const [bookings, setBookings] = useState([]);
@@ -1184,6 +1278,8 @@ function Dashboard({ onLoggedOut }) {
                 ))}
               </div>
             )}
+
+            <DangerZone onBookingsCleared={loadBookings} />
           </>
         )}
 

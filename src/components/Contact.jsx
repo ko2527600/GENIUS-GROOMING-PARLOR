@@ -116,6 +116,7 @@ export default function Contact() {
             <img
               src={whatsappChannelQr}
               alt="QR code to join the Genius Grooming Parlour WhatsApp channel"
+              loading="lazy"
               className="h-56 w-auto rounded-xl sm:h-64"
             />
             <span className="text-sm font-semibold text-brand">
