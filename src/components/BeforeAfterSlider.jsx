@@ -37,12 +37,14 @@ export default function BeforeAfterSlider({ before, after, beforeLabel = "Before
       <img
         src={after}
         alt={afterLabel}
+        loading="lazy"
         className="absolute inset-0 h-full w-full object-cover"
         draggable="false"
       />
       <img
         src={before}
         alt={beforeLabel}
+        loading="lazy"
         className="absolute inset-0 h-full w-full object-cover"
         style={{ clipPath: `inset(0 ${100 - percent}% 0 0)` }}
         draggable="false"

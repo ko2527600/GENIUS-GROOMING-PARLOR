@@ -8,6 +8,7 @@ export default function About() {
         <img
           src={storefront}
           alt="Genius Grooming Parlor storefront in Lapaz"
+          loading="lazy"
           className="mx-auto aspect-video w-full rounded-2xl object-cover shadow-sm"
         />
 

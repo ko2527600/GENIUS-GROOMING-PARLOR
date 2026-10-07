@@ -17,6 +17,7 @@ export default function BackgroundSlideshow({ images, interval = 5000 }) {
           key={i}
           src={src}
           alt=""
+          loading="lazy"
           className={`kenburns absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
