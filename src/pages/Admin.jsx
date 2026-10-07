@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { shop, payment, services, groupServicesByCategory } from "../data/shopData";
+import { flattenStaticMedia } from "../data/mediaLibrary";
 import logo from "../assets/logo.png";
 import CalendarView from "../components/CalendarView";
+
+const staticMediaItems = flattenStaticMedia();
 
 const MEDIA_CATEGORIES = ["Hair", "Nails", "Beauty"];
 const serviceGroupsForMedia = groupServicesByCategory(services);
@@ -608,6 +611,74 @@ function MediaCard({ item, onUpdate, onDelete }) {
   );
 }
 
+function StaticMediaCard({ item, hidden, categoryOverride, onToggleHidden, onSetCategory }) {
+  const [saving, setSaving] = useState(false);
+
+  async function toggleHidden() {
+    setSaving(true);
+    await onToggleHidden(item.id, !hidden);
+    setSaving(false);
+  }
+
+  async function changeCategory(e) {
+    setSaving(true);
+    await onSetCategory(item.id, e.target.value);
+    setSaving(false);
+  }
+
+  const whereLabel = [
+    item.galleryCategory ? "Gallery" : null,
+    ...item.serviceIds.map((id) => services.find((s) => s.id === id)?.name || id),
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  return (
+    <div
+      className={`overflow-hidden rounded-xl border bg-white shadow-sm ${
+        hidden ? "border-gray-200 opacity-40" : "border-gray-200"
+      }`}
+    >
+      <div className="relative aspect-square bg-gray-100">
+        <img src={item.thumb} alt="" className="h-full w-full object-cover" />
+        {item.kind === "video" && (
+          <span className="absolute right-1.5 top-1.5 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+            VIDEO
+          </span>
+        )}
+      </div>
+      <div className="space-y-2 p-3">
+        <p className="truncate text-xs text-gray-500" title={whereLabel}>
+          {whereLabel || "Not shown anywhere"}
+        </p>
+        {item.galleryCategory && (
+          <select
+            value={categoryOverride || item.galleryCategory}
+            onChange={changeCategory}
+            disabled={saving}
+            className="w-full rounded border border-gray-300 p-1.5 text-sm"
+          >
+            {MEDIA_CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        )}
+        <button
+          onClick={toggleHidden}
+          disabled={saving}
+          className={`w-full rounded-full py-1.5 text-xs font-semibold disabled:opacity-50 ${
+            hidden ? "bg-ink text-white" : "border border-red text-red"
+          }`}
+        >
+          {saving ? "Saving..." : hidden ? "Show on Site" : "Remove from Site"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function MediaView() {
   const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -616,18 +687,25 @@ function MediaView() {
   const [uploadError, setUploadError] = useState("");
   const [uploadCategory, setUploadCategory] = useState("Hair");
   const [uploadServiceId, setUploadServiceId] = useState("");
+  const [siteConfig, setSiteConfig] = useState({ hiddenStaticIds: [], categoryOverrides: {} });
+  const [staticFilter, setStaticFilter] = useState("all"); // all | shown | hidden
 
   async function load() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/media");
-      const data = await res.json();
-      if (!res.ok || !data.ok) {
-        setError(data.error || "Failed to load media");
+      const [mediaRes, configRes] = await Promise.all([
+        fetch("/api/media"),
+        fetch("/api/media?config=1"),
+      ]);
+      const mediaData = await mediaRes.json();
+      const configData = await configRes.json();
+      if (!mediaRes.ok || !mediaData.ok) {
+        setError(mediaData.error || "Failed to load media");
         return;
       }
-      setMedia(data.media);
+      setMedia(mediaData.media);
+      if (configRes.ok && configData.ok) setSiteConfig(configData.config);
     } catch {
       setError("Network error - please try again");
     } finally {
@@ -638,6 +716,42 @@ function MediaView() {
   useEffect(() => {
     load();
   }, []);
+
+  async function handleToggleStaticHidden(staticId, hidden) {
+    setSiteConfig((prev) => ({
+      ...prev,
+      hiddenStaticIds: hidden
+        ? [...prev.hiddenStaticIds, staticId]
+        : prev.hiddenStaticIds.filter((id) => id !== staticId),
+    }));
+    try {
+      const res = await fetch("/api/media?config=1", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ staticId, hidden }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      load();
+    }
+  }
+
+  async function handleSetStaticCategory(staticId, category) {
+    setSiteConfig((prev) => ({
+      ...prev,
+      categoryOverrides: { ...prev.categoryOverrides, [staticId]: category },
+    }));
+    try {
+      const res = await fetch("/api/media?config=1", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ staticId, category }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      load();
+    }
+  }
 
   async function handleFileChange(e) {
     const file = e.target.files?.[0];
@@ -772,6 +886,56 @@ function MediaView() {
           ))}
         </div>
       )}
+
+      <div className="mt-10 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h3 className="font-bold">Site Photos & Videos</h3>
+        <p className="mt-1 text-sm text-gray-500">
+          Every photo/video already on the site. "Remove from Site" hides one
+          everywhere it appears (gallery and any service tile); you can bring
+          it back anytime. Gallery items can also be moved to a different
+          category.
+        </p>
+
+        <div className="mt-4 flex gap-2">
+          {[
+            { id: "all", label: "All" },
+            { id: "shown", label: "Shown" },
+            { id: "hidden", label: "Hidden" },
+          ].map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setStaticFilter(f.id)}
+              className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${
+                staticFilter === f.id
+                  ? "border-ink bg-ink text-white"
+                  : "border-gray-300 text-gray-600 hover:border-ink"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          {staticMediaItems
+            .filter((item) => {
+              const isHidden = siteConfig.hiddenStaticIds.includes(item.id);
+              if (staticFilter === "shown") return !isHidden;
+              if (staticFilter === "hidden") return isHidden;
+              return true;
+            })
+            .map((item) => (
+              <StaticMediaCard
+                key={item.id}
+                item={item}
+                hidden={siteConfig.hiddenStaticIds.includes(item.id)}
+                categoryOverride={siteConfig.categoryOverrides[item.id]}
+                onToggleHidden={handleToggleStaticHidden}
+                onSetCategory={handleSetStaticCategory}
+              />
+            ))}
+        </div>
+      </div>
     </div>
   );
 }
