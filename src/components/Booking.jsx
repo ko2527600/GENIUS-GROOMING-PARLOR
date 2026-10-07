@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { upload } from "@vercel/blob/client";
+import compressImage from "../utils/compressImage";
 import {
   barbers,
   services,
@@ -75,6 +76,7 @@ export default function Booking() {
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [inspirationPhoto, setInspirationPhoto] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadPhotoProgress, setUploadPhotoProgress] = useState(0);
   const [dashboardSaveFailed, setDashboardSaveFailed] = useState(false);
   const [visitedBefore, setVisitedBefore] = useState(null); // null | true | false
   const [previousStylist, setPreviousStylist] = useState("");
@@ -132,10 +134,14 @@ export default function Booking() {
     }
 
     setUploadingPhoto(true);
+    setUploadPhotoProgress(0);
     try {
-      const blob = await upload(`inspiration/${Date.now()}-${file.name}`, file, {
+      const uploadFile = await compressImage(file);
+      const blob = await upload(`inspiration/${Date.now()}-${uploadFile.name}`, uploadFile, {
         access: 'public',
         handleUploadUrl: '/api/upload-inspiration',
+        multipart: true,
+        onUploadProgress: ({ percentage }) => setUploadPhotoProgress(percentage),
       });
       setInspirationPhoto(blob.url);
     } catch (err) {
@@ -143,6 +149,7 @@ export default function Booking() {
       alert('Failed to upload photo');
     } finally {
       setUploadingPhoto(false);
+      setUploadPhotoProgress(0);
     }
   }
 
@@ -457,7 +464,9 @@ export default function Booking() {
                 <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition hover:border-brand">
                   <span className="text-4xl">📷</span>
                   <span className="mt-2 text-sm font-medium text-gray-600">
-                    {uploadingPhoto ? "Uploading..." : "Click to upload photo"}
+                    {uploadingPhoto
+                      ? `Uploading... ${uploadPhotoProgress}%`
+                      : "Click to upload photo"}
                   </span>
                   <input
                     type="file"

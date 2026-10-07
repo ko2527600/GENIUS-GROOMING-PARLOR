@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { shop, payment, services, groupServicesByCategory } from "../data/shopData";
 import { flattenStaticMedia } from "../data/mediaLibrary";
+import compressImage from "../utils/compressImage";
 import logo from "../assets/logo.png";
 import CalendarView from "../components/CalendarView";
 
@@ -684,6 +685,7 @@ function MediaView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState("");
   const [uploadCategory, setUploadCategory] = useState("Hair");
   const [uploadServiceId, setUploadServiceId] = useState("");
@@ -760,11 +762,15 @@ function MediaView() {
 
     const type = file.type.startsWith("video/") ? "video" : "photo";
     setUploading(true);
+    setUploadProgress(0);
     setUploadError("");
     try {
-      await upload(file.name, file, {
+      const uploadFile = type === "photo" ? await compressImage(file) : file;
+      await upload(uploadFile.name, uploadFile, {
         access: "public",
         handleUploadUrl: "/api/media",
+        multipart: true,
+        onUploadProgress: ({ percentage }) => setUploadProgress(percentage),
         clientPayload: JSON.stringify({
           type,
           category: uploadCategory,
@@ -777,6 +783,7 @@ function MediaView() {
       setUploadError("Upload failed - please try again");
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   }
 
@@ -855,7 +862,9 @@ function MediaView() {
         <label className="mt-4 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 transition hover:border-brand">
           <span className="text-4xl">📷</span>
           <span className="mt-2 text-sm font-medium text-gray-600">
-            {uploading ? "Uploading..." : "Click to choose a photo or video"}
+            {uploading
+              ? `Uploading... ${uploadProgress}%`
+              : "Click to choose a photo or video"}
           </span>
           <input
             type="file"
