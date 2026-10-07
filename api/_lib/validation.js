@@ -89,6 +89,8 @@ export function validateBookingData(data) {
       date: data.date,
       payment: data.payment ? sanitizeString(data.payment) : null,
       inspirationPhoto: data.inspirationPhoto || null,
+      visitedBefore: data.visitedBefore === true,
+      previousStylist: data.previousStylist ? sanitizeString(data.previousStylist) : null,
     },
   };
 }

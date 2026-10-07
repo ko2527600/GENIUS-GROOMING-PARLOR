@@ -29,6 +29,8 @@ export async function createBooking(data) {
     status: "new",
     createdAt: new Date().toISOString(),
     inspirationPhoto: data.inspirationPhoto || null,
+    visitedBefore: Boolean(data.visitedBefore),
+    previousStylist: data.previousStylist || null,
   };
 
   await put(`${PREFIX}${id}.json`, JSON.stringify(booking), {

@@ -19,11 +19,27 @@ function serviceSummary(selectedServices, otherService) {
   return names.join(", ");
 }
 
-function buildMessage({ customer, barber, selectedServices, otherService, time, paymentRef }) {
+function buildMessage({
+  customer,
+  barber,
+  selectedServices,
+  otherService,
+  time,
+  paymentRef,
+  visitedBefore,
+  previousStylist,
+}) {
+  const visitLine =
+    visitedBefore === true
+      ? `Returning customer${previousStylist.trim() ? ` - previously with ${previousStylist.trim()}` : ""}\n`
+      : visitedBefore === false
+        ? "First-time customer\n"
+        : "";
   return (
     `New booking request - ${shop.name}\n` +
     `Name: ${customer.name}\n` +
     `Phone: ${customer.phone}\n` +
+    visitLine +
     `Stylist: ${barber?.name}\n` +
     `Service: ${serviceSummary(selectedServices, otherService)}\n` +
     `Time: ${time}\n` +
@@ -59,6 +75,8 @@ export default function Booking() {
   const [inspirationPhoto, setInspirationPhoto] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [dashboardSaveFailed, setDashboardSaveFailed] = useState(false);
+  const [visitedBefore, setVisitedBefore] = useState(null); // null | true | false
+  const [previousStylist, setPreviousStylist] = useState("");
 
   function toggleService(s) {
     setSelectedServices((prev) =>
@@ -164,6 +182,8 @@ export default function Booking() {
     setPaymentRef("");
     setCustomer({ name: "", phone: "" });
     setInspirationPhoto(null);
+    setVisitedBefore(null);
+    setPreviousStylist("");
   }
 
   const canNext =
@@ -200,6 +220,8 @@ export default function Booking() {
         date,
         payment: `${payment.currency}${payment.amount} sent to ${payment.momoNumber} (ref: ${paymentRef})`,
         inspirationPhoto,
+        visitedBefore,
+        previousStylist,
       }),
     })
       .then(async (res) => {
@@ -223,6 +245,8 @@ export default function Booking() {
       otherService,
       time,
       paymentRef,
+      visitedBefore,
+      previousStylist,
     });
 
     return (
@@ -574,6 +598,50 @@ export default function Booking() {
                     src={inspirationPhoto}
                     alt="Inspiration"
                     className="mt-2 h-24 w-24 rounded-lg object-cover"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Have you visited us before?</label>
+              <div className="mt-2 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setVisitedBefore(true)}
+                  className={`flex-1 rounded-full border py-2 text-sm font-semibold transition ${
+                    visitedBefore === true
+                      ? "border-brand bg-brand/10"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVisitedBefore(false);
+                    setPreviousStylist("");
+                  }}
+                  className={`flex-1 rounded-full border py-2 text-sm font-semibold transition ${
+                    visitedBefore === false
+                      ? "border-brand bg-brand/10"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  No
+                </button>
+              </div>
+              {visitedBefore === true && (
+                <div className="mt-3">
+                  <label className="text-sm font-medium">
+                    Which stylist attended to you? (if you remember)
+                  </label>
+                  <input
+                    value={previousStylist}
+                    onChange={(e) => setPreviousStylist(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-gray-300 p-3 focus:border-brand focus:outline-none"
+                    placeholder="e.g. Stylist One, or their name"
                   />
                 </div>
               )}

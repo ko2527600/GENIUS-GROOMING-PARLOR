@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { services, groupServicesByCategory } from "../data/shopData";
 import LazyVideo from "./LazyVideo";
 import Lightbox from "./Lightbox";
+import useMedia from "../hooks/useMedia";
 import braidingGallery from "../assets/gallery/gallery-21.jpg";
 import braidingGallery2 from "../assets/gallery/gallery-22.jpg";
 import braidingGallery3 from "../assets/gallery/gallery-23.jpg";
@@ -267,8 +268,21 @@ export default function Services() {
   const [openId, setOpenId] = useState(null);
   const [activeTab, setActiveTab] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const media = useMedia();
 
-  const openPhotos = (serviceMedia[openId] ?? []).filter((item) => item.type === "photo");
+  function mediaFor(serviceId) {
+    if (!serviceId) return [];
+    const uploaded = media
+      .filter((m) => m.serviceId === serviceId)
+      .map((m) =>
+        m.type === "video"
+          ? { type: "video", mp4: m.url }
+          : { type: "photo", src: m.url },
+      );
+    return [...(serviceMedia[serviceId] ?? []), ...uploaded];
+  }
+
+  const openPhotos = mediaFor(openId).filter((item) => item.type === "photo");
   const lightboxImages = openPhotos.map((p) => p.src);
 
   function navigateLightbox(delta) {
@@ -348,7 +362,7 @@ export default function Services() {
                       {open && (
                         <div className="border-t border-gray-100">
                           <ServiceMedia
-                            items={serviceMedia[s.id]}
+                            items={mediaFor(s.id)}
                             onPhotoClick={setLightboxIndex}
                           />
                         </div>

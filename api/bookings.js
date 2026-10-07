@@ -24,7 +24,18 @@ export default async function handler(req, res) {
       });
     }
 
-    const { name, phone, stylist, services, time, date, payment, inspirationPhoto } = validation.sanitized;
+    const {
+      name,
+      phone,
+      stylist,
+      services,
+      time,
+      date,
+      payment,
+      inspirationPhoto,
+      visitedBefore,
+      previousStylist,
+    } = validation.sanitized;
 
     // Check availability before creating booking
     try {
@@ -33,15 +44,17 @@ export default async function handler(req, res) {
         return res.status(409).json({ ok: false, error: "Time slot no longer available" });
       }
 
-      const booking = await createBooking({ 
-        name, 
-        phone, 
-        stylist, 
-        services, 
-        time, 
+      const booking = await createBooking({
+        name,
+        phone,
+        stylist,
+        services,
+        time,
         date,
         payment,
-        inspirationPhoto 
+        inspirationPhoto,
+        visitedBefore,
+        previousStylist,
       });
       await notifyCustomer("received", booking);
       return res.status(201).json({ ok: true, booking });
