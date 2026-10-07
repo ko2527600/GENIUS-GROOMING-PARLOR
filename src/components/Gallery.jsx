@@ -2,230 +2,8 @@ import { useState } from "react";
 import LazyVideo from "./LazyVideo";
 import Lightbox from "./Lightbox";
 import useMedia from "../hooks/useMedia";
-import gallery2 from "../assets/gallery/gallery-2.jpg";
-import gallery3 from "../assets/gallery/gallery-3.jpg";
-import gallery4 from "../assets/gallery/gallery-4.jpg";
-import gallery9 from "../assets/gallery/gallery-9.jpg";
-import gallery12 from "../assets/gallery/gallery-12.jpg";
-import gallery13 from "../assets/gallery/gallery-13.jpg";
-import gallery15 from "../assets/gallery/gallery-15.jpg";
-import gallery17 from "../assets/gallery/gallery-17.jpg";
-import gallery18 from "../assets/gallery/gallery-18.jpg";
-import gallery20 from "../assets/gallery/gallery-20.jpg";
-import gallery21 from "../assets/gallery/gallery-21.jpg";
-import gallery22 from "../assets/gallery/gallery-22.jpg";
-import gallery23 from "../assets/gallery/gallery-23.jpg";
-import gallery25 from "../assets/gallery/gallery-25.jpg";
-import gallery26 from "../assets/gallery/gallery-26.jpg";
-import gallery27 from "../assets/gallery/gallery-27.jpg";
-import gallery28 from "../assets/gallery/gallery-28.jpg";
-import gallery29 from "../assets/gallery/gallery-29.jpg";
-import gallery30 from "../assets/gallery/gallery-30.jpg";
-import gallery31 from "../assets/gallery/gallery-31.jpg";
-import gallery32 from "../assets/gallery/gallery-32.jpg";
-import gallery33 from "../assets/gallery/gallery-33.jpg";
-import gallery34 from "../assets/gallery/gallery-34.jpg";
-import gallery35 from "../assets/gallery/gallery-35.jpg";
-import gallery36 from "../assets/gallery/gallery-36.jpg";
-import gallery37 from "../assets/gallery/gallery-37.jpg";
-import gallery38 from "../assets/gallery/gallery-38.jpg";
-import gallery39 from "../assets/gallery/gallery-39.jpg";
-import gallery40 from "../assets/gallery/gallery-40.jpg";
-import gallery41 from "../assets/gallery/gallery-41.jpg";
-import gallery42 from "../assets/gallery/gallery-42.jpg";
-import gallery43 from "../assets/gallery/gallery-43.jpg";
-import gallery44 from "../assets/gallery/gallery-44.jpg";
-import gallery45 from "../assets/gallery/gallery-45.jpg";
-import gallery46 from "../assets/gallery/gallery-46.jpg";
-import gallery47 from "../assets/gallery/gallery-47.jpg";
-import gallery48 from "../assets/gallery/gallery-48.jpg";
-import gallery49 from "../assets/gallery/gallery-49.jpg";
-import gallery50 from "../assets/gallery/gallery-50.jpg";
-import gallery51 from "../assets/gallery/gallery-51.jpg";
-import gallery52 from "../assets/gallery/gallery-52.jpg";
-import gallery53 from "../assets/gallery/gallery-53.jpg";
-import gallery54 from "../assets/gallery/gallery-54.jpg";
-import gallery55 from "../assets/gallery/gallery-55.jpg";
-import gallery56 from "../assets/gallery/gallery-56.jpg";
-import gallery57 from "../assets/gallery/gallery-57.jpg";
-import gallery58 from "../assets/gallery/gallery-58.jpg";
-import gallery59 from "../assets/gallery/gallery-59.jpg";
-import gallery60 from "../assets/gallery/gallery-60.jpg";
-import gallery61 from "../assets/gallery/gallery-61.jpg";
-import gallery62 from "../assets/gallery/gallery-62.jpg";
-import gallery63 from "../assets/gallery/gallery-63.jpg";
-import gallery64 from "../assets/gallery/gallery-64.jpg";
-import gallery65 from "../assets/gallery/gallery-65.jpg";
-import gallery66 from "../assets/gallery/gallery-66.jpg";
-import gallery67 from "../assets/gallery/gallery-67.jpg";
-import gallery68 from "../assets/gallery/gallery-68.jpg";
-import gallery69 from "../assets/gallery/gallery-69.jpg";
-import gallery70 from "../assets/gallery/gallery-70.jpg";
-import gallery71 from "../assets/gallery/gallery-71.jpg";
-import gallery72 from "../assets/gallery/gallery-72.jpg";
-import gallery73 from "../assets/gallery/gallery-73.jpg";
-import gallery74 from "../assets/gallery/gallery-74.jpg";
-import gallery75 from "../assets/gallery/gallery-75.jpg";
-import gallery76 from "../assets/gallery/gallery-76.jpg";
-import gallery77 from "../assets/gallery/gallery-77.jpg";
-import gallery78 from "../assets/gallery/gallery-78.jpg";
-import gallery79 from "../assets/gallery/gallery-79.jpg";
-import gallery80 from "../assets/gallery/gallery-80.jpg";
-import process1Webm from "../assets/video/process-1.webm";
-import process1Mp4 from "../assets/video/process-1.mp4";
-import process1Poster from "../assets/video/process-1-poster.jpg";
-import process2Webm from "../assets/video/process-2.webm";
-import process2Mp4 from "../assets/video/process-2.mp4";
-import process2Poster from "../assets/video/process-2-poster.jpg";
-import braiding1Mp4 from "../assets/video/braiding-1.mp4";
-import braiding1Poster from "../assets/video/braiding-1-poster.jpg";
-import braiding2Mp4 from "../assets/video/braiding-2.mp4";
-import braiding2Poster from "../assets/video/braiding-2-poster.jpg";
-import braiding3Mp4 from "../assets/video/braiding-3.mp4";
-import braiding3Poster from "../assets/video/braiding-3-poster.jpg";
-import braiding4Mp4 from "../assets/video/braiding-4.mp4";
-import braiding4Poster from "../assets/video/braiding-4-poster.jpg";
-import braiding5Mp4 from "../assets/video/braiding-5.mp4";
-import braiding5Poster from "../assets/video/braiding-5-poster.jpg";
-import braiding6Mp4 from "../assets/video/braiding-6.mp4";
-import braiding6Poster from "../assets/video/braiding-6-poster.jpg";
-import haircut1Mp4 from "../assets/video/haircut-1.mp4";
-import haircut1Poster from "../assets/video/haircut-1-poster.jpg";
-import haircut2Mp4 from "../assets/video/haircut-2.mp4";
-import haircut2Poster from "../assets/video/haircut-2-poster.jpg";
-import braiding7Mp4 from "../assets/video/braiding-7.mp4";
-import braiding7Poster from "../assets/video/braiding-7-poster.jpg";
-import braiding8Mp4 from "../assets/video/braiding-8.mp4";
-import braiding8Poster from "../assets/video/braiding-8-poster.jpg";
-import braiding9Mp4 from "../assets/video/braiding-9.mp4";
-import braiding9Poster from "../assets/video/braiding-9-poster.jpg";
-import braiding10Mp4 from "../assets/video/braiding-10.mp4";
-import braiding10Poster from "../assets/video/braiding-10-poster.jpg";
-import braiding11Mp4 from "../assets/video/braiding-11.mp4";
-import braiding11Poster from "../assets/video/braiding-11-poster.jpg";
-import braiding12Mp4 from "../assets/video/braiding-12.mp4";
-import braiding12Poster from "../assets/video/braiding-12-poster.jpg";
-import nails1Mp4 from "../assets/video/nails-1.mp4";
-import nails1Poster from "../assets/video/nails-1-poster.jpg";
-import nails2Mp4 from "../assets/video/nails-2.mp4";
-import nails2Poster from "../assets/video/nails-2-poster.jpg";
-import nails3Mp4 from "../assets/video/nails-3.mp4";
-import nails3Poster from "../assets/video/nails-3-poster.jpg";
-import nails4Mp4 from "../assets/video/nails-4.mp4";
-import nails4Poster from "../assets/video/nails-4-poster.jpg";
-import nails5Mp4 from "../assets/video/nails-5.mp4";
-import nails5Poster from "../assets/video/nails-5-poster.jpg";
-import nails6Mp4 from "../assets/video/nails-6.mp4";
-import nails6Poster from "../assets/video/nails-6-poster.jpg";
-import nails7Mp4 from "../assets/video/nails-7.mp4";
-import nails7Poster from "../assets/video/nails-7-poster.jpg";
-import nails8Mp4 from "../assets/video/nails-8.mp4";
-import nails8Poster from "../assets/video/nails-8-poster.jpg";
-import nails9Mp4 from "../assets/video/nails-9.mp4";
-import nails9Poster from "../assets/video/nails-9-poster.jpg";
-import nails10Mp4 from "../assets/video/nails-10.mp4";
-import nails10Poster from "../assets/video/nails-10-poster.jpg";
-
-const photos = [
-  { src: gallery2, category: "Hair" },
-  { src: gallery3, category: "Hair" },
-  { src: gallery4, category: "Hair" },
-  { src: gallery9, category: "Hair" },
-  { src: gallery12, category: "Hair" },
-  { src: gallery13, category: "Hair" },
-  { src: gallery15, category: "Hair" },
-  { src: gallery17, category: "Hair" },
-  { src: gallery18, category: "Hair" },
-  { src: gallery20, category: "Hair" },
-  { src: gallery21, category: "Hair" },
-  { src: gallery22, category: "Hair" },
-  { src: gallery23, category: "Hair" },
-  { src: gallery25, category: "Hair" },
-  { src: gallery26, category: "Hair" },
-  { src: gallery27, category: "Hair" },
-  { src: gallery48, category: "Hair" },
-  { src: gallery49, category: "Hair" },
-  { src: gallery50, category: "Hair" },
-  { src: gallery51, category: "Hair" },
-  { src: gallery52, category: "Hair" },
-  { src: gallery53, category: "Hair" },
-  { src: gallery54, category: "Hair" },
-  { src: gallery55, category: "Hair" },
-  { src: gallery56, category: "Hair" },
-  { src: gallery57, category: "Hair" },
-  { src: gallery58, category: "Hair" },
-  { src: gallery59, category: "Hair" },
-  { src: gallery60, category: "Hair" },
-  { src: gallery61, category: "Hair" },
-  { src: gallery62, category: "Hair" },
-  { src: gallery63, category: "Hair" },
-  { src: gallery64, category: "Hair" },
-  { src: gallery65, category: "Hair" },
-  { src: gallery66, category: "Hair" },
-  { src: gallery67, category: "Hair" },
-  { src: gallery68, category: "Hair" },
-  { src: gallery69, category: "Hair" },
-  { src: gallery70, category: "Hair" },
-  { src: gallery71, category: "Hair" },
-  { src: gallery72, category: "Hair" },
-  { src: gallery73, category: "Hair" },
-  { src: gallery74, category: "Hair" },
-  { src: gallery75, category: "Hair" },
-  { src: gallery76, category: "Hair" },
-  { src: gallery77, category: "Hair" },
-  { src: gallery28, category: "Nails" },
-  { src: gallery29, category: "Nails" },
-  { src: gallery30, category: "Nails" },
-  { src: gallery31, category: "Nails" },
-  { src: gallery32, category: "Nails" },
-  { src: gallery33, category: "Nails" },
-  { src: gallery34, category: "Nails" },
-  { src: gallery35, category: "Nails" },
-  { src: gallery36, category: "Nails" },
-  { src: gallery37, category: "Nails" },
-  { src: gallery38, category: "Nails" },
-  { src: gallery39, category: "Nails" },
-  { src: gallery40, category: "Nails" },
-  { src: gallery41, category: "Nails" },
-  { src: gallery42, category: "Nails" },
-  { src: gallery43, category: "Nails" },
-  { src: gallery44, category: "Nails" },
-  { src: gallery45, category: "Nails" },
-  { src: gallery46, category: "Nails" },
-  { src: gallery47, category: "Nails" },
-  { src: gallery78, category: "Beauty" },
-  { src: gallery79, category: "Beauty" },
-  { src: gallery80, category: "Beauty" },
-];
-
-const videos = [
-  { webm: process1Webm, mp4: process1Mp4, poster: process1Poster, category: "Hair" },
-  { webm: process2Webm, mp4: process2Mp4, poster: process2Poster, category: "Hair" },
-  { mp4: braiding1Mp4, poster: braiding1Poster, category: "Hair" },
-  { mp4: braiding2Mp4, poster: braiding2Poster, category: "Hair" },
-  { mp4: braiding3Mp4, poster: braiding3Poster, category: "Hair" },
-  { mp4: braiding4Mp4, poster: braiding4Poster, category: "Hair" },
-  { mp4: braiding5Mp4, poster: braiding5Poster, category: "Hair" },
-  { mp4: braiding6Mp4, poster: braiding6Poster, category: "Hair" },
-  { mp4: braiding7Mp4, poster: braiding7Poster, category: "Hair" },
-  { mp4: braiding8Mp4, poster: braiding8Poster, category: "Hair" },
-  { mp4: braiding9Mp4, poster: braiding9Poster, category: "Hair" },
-  { mp4: braiding10Mp4, poster: braiding10Poster, category: "Hair" },
-  { mp4: braiding11Mp4, poster: braiding11Poster, category: "Hair" },
-  { mp4: braiding12Mp4, poster: braiding12Poster, category: "Hair" },
-  { mp4: haircut1Mp4, poster: haircut1Poster, category: "Hair" },
-  { mp4: haircut2Mp4, poster: haircut2Poster, category: "Hair" },
-  { mp4: nails1Mp4, poster: nails1Poster, category: "Nails" },
-  { mp4: nails2Mp4, poster: nails2Poster, category: "Nails" },
-  { mp4: nails3Mp4, poster: nails3Poster, category: "Nails" },
-  { mp4: nails4Mp4, poster: nails4Poster, category: "Nails" },
-  { mp4: nails5Mp4, poster: nails5Poster, category: "Nails" },
-  { mp4: nails6Mp4, poster: nails6Poster, category: "Nails" },
-  { mp4: nails7Mp4, poster: nails7Poster, category: "Nails" },
-  { mp4: nails8Mp4, poster: nails8Poster, category: "Nails" },
-  { mp4: nails9Mp4, poster: nails9Poster, category: "Nails" },
-  { mp4: nails10Mp4, poster: nails10Poster, category: "Nails" },
-];
+import useSiteConfig from "../hooks/useSiteConfig";
+import { galleryPhotos, galleryVideos } from "../data/mediaLibrary";
 
 const TABS = ["All", "Hair", "Nails", "Beauty"];
 const PREVIEW_LIMIT = 8;
@@ -235,11 +13,19 @@ export default function Gallery() {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [showAll, setShowAll] = useState(false);
   const media = useMedia();
+  const { hiddenStaticIds, categoryOverrides } = useSiteConfig();
 
   function selectTab(tab) {
     setActiveTab(tab);
     setShowAll(false);
   }
+
+  const visibleStaticPhotos = galleryPhotos
+    .filter((p) => !hiddenStaticIds.includes(p.id))
+    .map((p) => ({ ...p, category: categoryOverrides[p.id] || p.category }));
+  const visibleStaticVideos = galleryVideos
+    .filter((v) => !hiddenStaticIds.includes(v.id))
+    .map((v) => ({ ...v, category: categoryOverrides[v.id] || v.category }));
 
   const uploadedPhotos = media
     .filter((m) => m.type === "photo")
@@ -248,8 +34,8 @@ export default function Gallery() {
     .filter((m) => m.type === "video")
     .map((m) => ({ mp4: m.url, category: m.category }));
 
-  const allPhotos = [...photos, ...uploadedPhotos];
-  const allVideos = [...videos, ...uploadedVideos];
+  const allPhotos = [...visibleStaticPhotos, ...uploadedPhotos];
+  const allVideos = [...visibleStaticVideos, ...uploadedVideos];
 
   const filteredVideos =
     activeTab === "All" ? allVideos : allVideos.filter((v) => v.category === activeTab);

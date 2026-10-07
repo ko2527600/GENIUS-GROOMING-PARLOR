@@ -1,10 +1,53 @@
 import { handleUpload } from "@vercel/blob/client";
 import { listMedia, updateMedia, deleteMedia, createMediaRecord } from "./_lib/media.js";
+import { getSiteConfig, setStaticMediaHidden, setStaticMediaCategory } from "./_lib/siteConfig.js";
 import { isAuthenticated } from "./_lib/session.js";
 
 const VALID_CATEGORIES = ["Hair", "Nails", "Beauty"];
 
 export default async function handler(req, res) {
+  // ?config=1 - the hidden/recategorized built-in media list (see
+  // src/data/mediaLibrary.js + Admin.jsx's "Site Photos & Videos" panel).
+  // Handled before the generic GET/PATCH branches below since it shares
+  // their HTTP methods but is a different resource.
+  if (req.query.config) {
+    if (req.method === "GET") {
+      try {
+        const config = await getSiteConfig();
+        return res.status(200).json({ ok: true, config });
+      } catch (err) {
+        console.error("Failed to load site config:", err);
+        return res.status(500).json({ ok: false, error: "Failed to load site config" });
+      }
+    }
+
+    if (req.method === "PATCH") {
+      if (!isAuthenticated(req)) {
+        return res.status(401).json({ ok: false, error: "Unauthorized" });
+      }
+      const { staticId, hidden, category } = req.body ?? {};
+      if (!staticId) {
+        return res.status(400).json({ ok: false, error: "Missing staticId" });
+      }
+      if (category !== undefined && category && !VALID_CATEGORIES.includes(category)) {
+        return res.status(400).json({ ok: false, error: "Invalid category" });
+      }
+
+      try {
+        let config;
+        if (hidden !== undefined) config = await setStaticMediaHidden(staticId, hidden);
+        if (category !== undefined) config = await setStaticMediaCategory(staticId, category || null);
+        return res.status(200).json({ ok: true, config });
+      } catch (err) {
+        console.error("Failed to update site config:", err);
+        return res.status(500).json({ ok: false, error: "Failed to update site config" });
+      }
+    }
+
+    res.setHeader("Allow", "GET, PATCH");
+    return res.status(405).json({ ok: false, error: "Method not allowed" });
+  }
+
   // GET - public. The site's Gallery and Services pages read this to show
   // admin-uploaded photos/videos alongside the built-in ones.
   if (req.method === "GET") {
