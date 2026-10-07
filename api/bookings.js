@@ -1,4 +1,4 @@
-import { createBooking, listBookings, checkAvailability } from "./_lib/bookings.js";
+import { createBooking, listBookings, checkAvailability, deleteAllBookings } from "./_lib/bookings.js";
 import { isAuthenticated } from "./_lib/session.js";
 import { notifyCustomer } from "./_lib/notify.js";
 import { validateBookingData } from "./_lib/validation.js";
@@ -77,6 +77,27 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader("Allow", "GET, POST");
+  // DELETE - wipes every booking (and, since Customers is derived from
+  // booking history, every customer record with it). Requires typing a
+  // literal confirmation phrase in the body, not just the session cookie,
+  // so this can't be triggered by an accidental click or a stray request.
+  if (req.method === "DELETE") {
+    if (!isAuthenticated(req)) {
+      return res.status(401).json({ ok: false, error: "Unauthorized" });
+    }
+    const { confirm } = req.body ?? {};
+    if (confirm !== "DELETE ALL BOOKINGS") {
+      return res.status(400).json({ ok: false, error: "Confirmation phrase did not match" });
+    }
+    try {
+      const count = await deleteAllBookings();
+      return res.status(200).json({ ok: true, deleted: count });
+    } catch (err) {
+      console.error("Failed to delete all bookings:", err);
+      return res.status(500).json({ ok: false, error: "Failed to delete bookings" });
+    }
+  }
+
+  res.setHeader("Allow", "GET, POST, DELETE");
   return res.status(405).json({ ok: false, error: "Method not allowed" });
 }

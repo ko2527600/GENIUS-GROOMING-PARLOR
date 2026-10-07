@@ -1,4 +1,4 @@
-import { put, list, get } from "@vercel/blob";
+import { put, list, get, del } from "@vercel/blob";
 import crypto from "crypto";
 
 const PREFIX = "quiz-answers/";
@@ -41,4 +41,12 @@ export async function listQuizAnswers() {
   return answers
     .filter(Boolean)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+// Permanently wipes every "Find Your Style" quiz answer - see
+// api/quiz-answers.js's DELETE handler for the confirmation gate.
+export async function deleteAllQuizAnswers() {
+  const { blobs } = await list({ prefix: PREFIX, limit: 1000 });
+  await Promise.all(blobs.map((b) => del(b.pathname)));
+  return blobs.length;
 }

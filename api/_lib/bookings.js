@@ -1,4 +1,4 @@
-import { put, list, get } from "@vercel/blob";
+import { put, list, get, del } from "@vercel/blob";
 import crypto from "crypto";
 
 const PREFIX = "bookings/";
@@ -64,6 +64,16 @@ export async function listBookings() {
   return bookings
     .filter(Boolean)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+// Permanently wipes every booking (and with it, since the Customers tab is
+// derived from booking history, every customer record). Used to clear out
+// test bookings before a site goes live - see api/bookings.js's DELETE
+// handler for the confirmation gate.
+export async function deleteAllBookings() {
+  const { blobs } = await list({ prefix: PREFIX, limit: 1000 });
+  await Promise.all(blobs.map((b) => del(b.pathname)));
+  return blobs.length;
 }
 
 export async function updateBookingStatus(id, status) {
