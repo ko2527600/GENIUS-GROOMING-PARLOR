@@ -205,7 +205,7 @@ function CustomerCard({ customer }) {
   async function handleRemind() {
     setStatus("sending");
     try {
-      const res = await fetch("/api/customers/remind", {
+      const res = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: customer.phone }),
@@ -650,7 +650,7 @@ function MediaView() {
     try {
       await upload(file.name, file, {
         access: "public",
-        handleUploadUrl: "/api/media-upload",
+        handleUploadUrl: "/api/media",
         clientPayload: JSON.stringify({
           type,
           category: uploadCategory,
@@ -669,7 +669,7 @@ function MediaView() {
   async function handleUpdate(id, patch) {
     setMedia((prev) => prev.map((m) => (m.id === id ? { ...m, ...patch } : m)));
     try {
-      const res = await fetch(`/api/media/${id}`, {
+      const res = await fetch(`/api/media?id=${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patch),
@@ -683,7 +683,7 @@ function MediaView() {
   async function handleDelete(id) {
     setMedia((prev) => prev.filter((m) => m.id !== id));
     try {
-      const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/media?id=${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
     } catch {
       load();
