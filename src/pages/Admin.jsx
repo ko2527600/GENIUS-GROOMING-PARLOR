@@ -782,7 +782,6 @@ function MediaView() {
       await upload(uploadFile.name, uploadFile, {
         access: "public",
         handleUploadUrl: "/api/media",
-        multipart: true,
         onUploadProgress: ({ percentage }) => setUploadProgress(percentage),
         clientPayload: JSON.stringify({
           type,
