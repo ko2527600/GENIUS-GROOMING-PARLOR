@@ -60,7 +60,9 @@ export default async function handler(req, res) {
       return res.status(201).json({ ok: true, booking });
     } catch (err) {
       console.error("Failed to create booking:", err);
-      return res.status(500).json({ ok: false, error: "Failed to save booking" });
+      return res
+        .status(500)
+        .json({ ok: false, error: `Failed to save booking: ${err?.message || err}` });
     }
   }
 
