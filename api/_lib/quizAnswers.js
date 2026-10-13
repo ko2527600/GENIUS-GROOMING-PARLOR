@@ -20,7 +20,7 @@ export async function createQuizAnswer(data) {
   };
 
   await put(`${PREFIX}${id}.json`, JSON.stringify(answer), {
-    access: "private",
+    access: "public",
     addRandomSuffix: false,
     allowOverwrite: false,
     contentType: "application/json",
@@ -30,7 +30,7 @@ export async function createQuizAnswer(data) {
 }
 
 async function readAnswerBlob(pathname) {
-  const result = await get(pathname, { access: "private" });
+  const result = await get(pathname, { access: "public" });
   if (!result) return null;
   return new Response(result.stream).json();
 }
