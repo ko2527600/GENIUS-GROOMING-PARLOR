@@ -1,5 +1,4 @@
-import { handleUpload } from "@vercel/blob/client";
-import { listMedia, updateMedia, deleteMedia, createMediaRecord } from "./_lib/media.js";
+import { listMedia, updateMedia, deleteMedia, createMedia } from "./_lib/media.js";
 import { getSiteConfig, setStaticMediaHidden, setStaticMediaCategory } from "./_lib/siteConfig.js";
 import { isAuthenticated } from "./_lib/session.js";
 
@@ -64,51 +63,29 @@ export default async function handler(req, res) {
     }
   }
 
-  // POST - direct browser -> Blob storage upload, via @vercel/blob/client's
-  // token flow (see Admin.jsx's MediaView). Auth is enforced inside
-  // onBeforeGenerateToken rather than at the top of this handler, because
-  // Vercel's own infrastructure (not the admin's browser) calls this same
-  // endpoint a second time to report the completed upload, with no admin
-  // session cookie attached.
+  // POST - admin only. The file is sent as base64 in the body and relayed
+  // to Blob storage server-side (not uploaded directly from the browser) -
+  // direct browser-to-Blob uploads hit an unresolved CORS block on this
+  // custom domain, so everything goes through our own server instead.
+  // Client-side compression (see src/utils/compressImage.js) keeps photos
+  // well under Vercel's request body limit despite the extra hop.
   if (req.method === "POST") {
-    try {
-      const jsonResponse = await handleUpload({
-        body: req.body,
-        request: req,
-        onBeforeGenerateToken: async (pathname, clientPayload) => {
-          if (!isAuthenticated(req)) {
-            throw new Error("Unauthorized");
-          }
-          return {
-            allowedContentTypes: [
-              "image/jpeg",
-              "image/png",
-              "image/webp",
-              "image/heic",
-              "video/mp4",
-              "video/webm",
-              "video/quicktime",
-            ],
-            addRandomSuffix: true,
-            tokenPayload: clientPayload,
-          };
-        },
-        onUploadCompleted: async ({ blob, tokenPayload }) => {
-          const meta = tokenPayload ? JSON.parse(tokenPayload) : {};
-          await createMediaRecord({
-            url: blob.url,
-            pathname: blob.pathname,
-            type: meta.type,
-            category: meta.category,
-            serviceId: meta.serviceId,
-          });
-        },
-      });
+    if (!isAuthenticated(req)) {
+      return res.status(401).json({ ok: false, error: "Unauthorized" });
+    }
+    const { file, filename, contentType, type, category, serviceId } = req.body ?? {};
+    if (!file || !type) {
+      return res.status(400).json({ ok: false, error: "Missing file or type" });
+    }
 
-      return res.status(200).json(jsonResponse);
+    try {
+      const media = await createMedia({ file, filename, contentType, type, category, serviceId });
+      return res.status(201).json({ ok: true, media });
     } catch (err) {
-      console.error("Media upload token error:", err);
-      return res.status(400).json({ ok: false, error: err.message || "Upload failed" });
+      console.error("Failed to upload media:", err);
+      return res
+        .status(500)
+        .json({ ok: false, error: `Upload failed: ${err?.message || err}` });
     }
   }
 

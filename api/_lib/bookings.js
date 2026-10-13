@@ -34,7 +34,7 @@ export async function createBooking(data) {
   };
 
   await put(`${PREFIX}${id}.json`, JSON.stringify(booking), {
-    access: "private",
+    access: "public",
     addRandomSuffix: false,
     allowOverwrite: false,
     contentType: "application/json",
@@ -53,7 +53,7 @@ function convertTo24Hour(time12h) {
 }
 
 async function readBookingBlob(pathname) {
-  const result = await get(pathname, { access: "private" });
+  const result = await get(pathname, { access: "public" });
   if (!result) return null;
   return new Response(result.stream).json();
 }
@@ -83,7 +83,7 @@ export async function updateBookingStatus(id, status) {
 
   booking.status = status;
   await put(pathname, JSON.stringify(booking), {
-    access: "private",
+    access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
@@ -102,7 +102,7 @@ export async function markReminderSent(id) {
 
   booking.reminderSentAt = new Date().toISOString();
   await put(pathname, JSON.stringify(booking), {
-    access: "private",
+    access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
