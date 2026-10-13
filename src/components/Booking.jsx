@@ -76,7 +76,7 @@ export default function Booking() {
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [inspirationPhoto, setInspirationPhoto] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [dashboardSaveFailed, setDashboardSaveFailed] = useState(false);
+  const [dashboardSaveFailed, setDashboardSaveFailed] = useState(null);
   const [visitedBefore, setVisitedBefore] = useState(null); // null | true | false
   const [previousStylist, setPreviousStylist] = useState("");
 
@@ -221,12 +221,12 @@ export default function Booking() {
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
           console.error("Dashboard save failed:", res.status, body);
-          setDashboardSaveFailed(true);
+          setDashboardSaveFailed(body?.error || `Server error (${res.status})`);
         }
       })
       .catch((err) => {
         console.error("Dashboard save failed:", err);
-        setDashboardSaveFailed(true);
+        setDashboardSaveFailed(err?.message || "Network error");
       });
   }
 
@@ -265,6 +265,8 @@ export default function Booking() {
           {dashboardSaveFailed && (
             <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
               Please still tap Send below — it's the message that reaches us.
+              <br />
+              <span className="font-mono text-xs">{dashboardSaveFailed}</span>
             </p>
           )}
 
